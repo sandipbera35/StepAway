@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:stepaway_ui/stepaway_ui.dart';
+import 'package:window_manager/window_manager.dart';
 
 import '../ipc/rpc_client.dart';
 import '../model.dart';
 import '../pickers.dart';
 import '../strings.dart';
+import '../uninstall.dart';
+import 'uninstall_screen.dart';
 import '../widgets.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -294,6 +297,100 @@ class SettingsPage extends StatelessWidget {
     if (context.mounted) await _set(context, {'unlock_enabled': on});
   }
 
+  Widget _uninstallBlock(BuildContext context, Uninstaller u) {
+    final danger = AppColors.of(context).danger;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(S.uninstallSubtitle, style: Theme.of(context).textTheme.bodySmall),
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+          key: const Key('uninstall-button'),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: danger,
+            side: BorderSide(color: danger.withValues(alpha: 0.6)),
+          ),
+          onPressed: () => _confirmUninstall(context, u),
+          icon: const Icon(Icons.delete_outline_rounded),
+          label: const Text(S.uninstallButton),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _confirmUninstall(BuildContext context, Uninstaller u) async {
+    var removeData = true;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (d) {
+        final danger = AppColors.of(d).danger;
+        return StatefulBuilder(
+          builder: (d, setState) => AlertDialog(
+            icon: Icon(Icons.warning_amber_rounded, color: danger, size: 36),
+            title: const Text(S.uninstallDialogTitle),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(S.uninstallDialogBody),
+                const SizedBox(height: 12),
+                CheckboxListTile(
+                  key: const Key('uninstall-data-checkbox'),
+                  contentPadding: EdgeInsets.zero,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: removeData,
+                  onChanged: (v) => setState(() => removeData = v ?? true),
+                  title: const Text(S.uninstallDeleteData),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  S.uninstallWarning,
+                  style: TextStyle(color: danger, fontWeight: FontWeight.w600),
+                ),
+                if (u.needsAdmin) ...[
+                  const SizedBox(height: 8),
+                  const Text(S.uninstallAdminNote),
+                ],
+                if (u.isDevelopmentCopy) ...[
+                  const SizedBox(height: 8),
+                  const Text(S.uninstallDevNote),
+                ],
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(d, false),
+                child: const Text(S.cancel),
+              ),
+              FilledButton(
+                key: const Key('uninstall-confirm'),
+                style: FilledButton.styleFrom(backgroundColor: danger),
+                onPressed: () => Navigator.pop(d, true),
+                child: const Text(S.uninstallConfirm),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (ok != true || !context.mounted) return;
+    final controller = UninstallController(u, removeData: removeData);
+    await Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        opaque: false,
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (_, _, _) => UninstallScreen(
+          controller: controller,
+          onClose: () => windowManager.destroy(),
+        ),
+        transitionsBuilder: (_, a, _, child) => FadeTransition(
+          opacity: CurvedAnimation(parent: a, curve: Curves.easeOut),
+          child: child,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -469,6 +566,10 @@ class SettingsPage extends StatelessWidget {
                         : null,
                   ),
                 ]),
+                if (model.uninstaller != null)
+                  _section(context, 7, S.uninstallSection, [
+                    _uninstallBlock(context, model.uninstaller!),
+                  ]),
               ],
             ),
           ),

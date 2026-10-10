@@ -1,3 +1,5 @@
+import 'uninstall.dart';
+
 /// All user-visible text lives here so it can move to ARB/intl files later.
 class S {
   static const appName = 'StepAway';
@@ -185,4 +187,46 @@ class S {
       'Listening for your watch... keep it close and the pairing screen open.';
   static const codeBad =
       'That code does not look right. It has 16 letters and digits.';
+
+  // ---- uninstall ----
+  static const uninstallSection = 'Uninstall';
+  static const uninstallSubtitle =
+      'Remove StepAway and everything it stored from this computer.';
+  static const uninstallButton = 'Uninstall StepAway...';
+  static const uninstallDialogTitle = 'Uninstall StepAway?';
+  static const uninstallDialogBody =
+      'This will remove StepAway from this computer:\n'
+      '  \u2022 the app and the background service\n'
+      '  \u2022 the startup entry and shortcuts';
+  static const uninstallDeleteData =
+      'Also delete paired devices, settings and logs';
+  static const uninstallWarning =
+      'This cannot be undone. This computer will stop locking when your phone moves away.';
+  static const uninstallAdminNote =
+      'You will be asked for your administrator password.';
+  static const uninstallConfirm = 'Uninstall';
+  static const uninstallingTitle = 'Removing StepAway...';
+  static const uninstallingSubtitle = 'Please keep this window open.';
+  static const uninstallingSubtitleAdmin =
+      'Please keep this window open and enter your password if asked.';
+  static const uninstallDoneTitle = 'StepAway has been removed';
+  static const uninstallDoneData =
+      'The app, the service and all your data are gone from this computer.';
+  static const uninstallDoneKept =
+      'The app and the service are gone. Your paired devices and settings were kept.';
+  static const uninstallFailedTitle = 'Could not finish removing StepAway';
+  static const uninstallPhoneHint =
+      'Also remove this computer from the StepAway app on your phone.';
+  static const uninstallDeferredHint =
+      'The app folder is deleted a few seconds after you close this window.';
+  static const uninstallDevNote =
+      'This is a development copy, so the app files will be left in place.';
+
+  static String uninstallStep(UninstallStep s) => switch (s) {
+    UninstallStep.stopService => 'Stopping the background service',
+    UninstallStep.appFiles => 'Removing the app',
+    UninstallStep.autostart => 'Removing the startup entry',
+    UninstallStep.shortcuts => 'Removing shortcuts',
+    UninstallStep.data => 'Deleting paired devices, settings and logs',
+  };
 }

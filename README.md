@@ -17,6 +17,7 @@ Automatically lock your Linux or Windows computer when your paired Android phone
 - Pairing by QR code with a verification code; signed, rotating tokens (no fixed ID to spoof).
 - Calibration wizard, live signal graph, pause media and close chosen apps on lock.
 - Android "Speed vs battery" setting (Saver / Balanced / Fast).
+- Built-in uninstaller (Settings → Uninstall): warns first, then removes the app, background service, startup entry, shortcuts and (optionally) your data, on Linux and Windows.
 
 ## Install
 Download from the [Releases](../../releases) page:

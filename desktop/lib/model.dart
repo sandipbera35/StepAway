@@ -5,6 +5,7 @@ import 'package:flutter/material.dart' show IconData, Icons;
 
 import 'ipc/rpc_client.dart';
 import 'service.dart';
+import 'uninstall.dart';
 
 class Reading {
   const Reading(this.time, this.rssi, this.distance);
@@ -91,10 +92,11 @@ class PairingSession {
 enum CalibPhase { idle, nearReady, measuring, farReady, done, failed }
 
 class DaemonModel extends ChangeNotifier {
-  DaemonModel(this.client, {this.service});
+  DaemonModel(this.client, {this.service, this.uninstaller});
 
   final RpcClient client;
   final ServiceManager? service;
+  final Uninstaller? uninstaller;
   bool autostart = false;
   bool _triedStart = false;
   bool connected = false;

@@ -14,6 +14,7 @@ import 'service.dart';
 import 'strings.dart';
 import 'theme_store.dart';
 import 'title_bar.dart';
+import 'uninstall.dart';
 import 'window_frame.dart';
 
 Future<void> main() async {
@@ -39,7 +40,11 @@ Future<void> main() async {
   await theme.init();
   runApp(
     StepAwayDesktop(
-      model: DaemonModel(RpcClient(), service: SystemServiceManager())..init(),
+      model: DaemonModel(
+        RpcClient(),
+        service: SystemServiceManager(),
+        uninstaller: createUninstaller(),
+      )..init(),
       theme: theme,
     ),
   );

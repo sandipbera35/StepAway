@@ -9,6 +9,7 @@ import 'package:stepaway_desktop/main.dart';
 import 'package:stepaway_desktop/model.dart';
 import 'package:stepaway_desktop/strings.dart';
 import 'package:stepaway_desktop/title_bar.dart';
+import 'package:stepaway_desktop/uninstall.dart';
 import 'package:stepaway_desktop/window_frame.dart';
 import 'package:stepaway_ui/stepaway_ui.dart';
 
@@ -160,9 +161,36 @@ class FakeDaemon implements Transport {
   );
 }
 
-Future<(DaemonModel, FakeDaemon)> boot(WidgetTester t) async {
+class FakeUninstaller implements Uninstaller {
+  final ran = <UninstallStep>[];
+  @override
+  bool get needsAdmin => false;
+  @override
+  bool get deletesAfterExit => false;
+  @override
+  bool get isDevelopmentCopy => false;
+  @override
+  List<UninstallStep> plan({required bool removeData}) => [
+    UninstallStep.stopService,
+    if (removeData) UninstallStep.data,
+    UninstallStep.appFiles,
+  ];
+  @override
+  Future<StepStatus> run(UninstallStep step) async {
+    ran.add(step);
+    return StepStatus.done;
+  }
+}
+
+Future<(DaemonModel, FakeDaemon)> boot(
+  WidgetTester t, {
+  Uninstaller? uninstaller,
+}) async {
   final d = FakeDaemon();
-  final model = DaemonModel(RpcClient(factory: () async => d));
+  final model = DaemonModel(
+    RpcClient(factory: () async => d),
+    uninstaller: uninstaller,
+  );
   await t.binding.setSurfaceSize(const Size(1100, 800));
   await t.pumpWidget(StepAwayDesktop(model: model));
   await model.init();
@@ -239,6 +267,52 @@ void main() {
     await t.tap(find.text(S.turnOn));
     await t.pumpAndSettle();
     expect(d.config['unlock_enabled'], true);
+    model.dispose();
+  });
+
+  testWidgets('uninstall warns first, and only runs after confirming', (
+    t,
+  ) async {
+    final fake = FakeUninstaller();
+    final (model, _) = await boot(t, uninstaller: fake);
+    await t.tap(find.byKey(const Key('nav-settings')));
+    await t.pumpAndSettle();
+    await t.ensureVisible(find.byKey(const Key('uninstall-button')));
+    await t.pumpAndSettle();
+    await t.tap(find.byKey(const Key('uninstall-button')));
+    await t.pumpAndSettle();
+    expect(find.text(S.uninstallDialogTitle), findsOneWidget);
+    expect(find.text(S.uninstallWarning), findsOneWidget);
+    await t.tap(find.text(S.cancel));
+    await t.pumpAndSettle();
+    expect(fake.ran, isEmpty);
+
+    await t.tap(find.byKey(const Key('uninstall-button')));
+    await t.pumpAndSettle();
+    await t.tap(
+      find.byKey(const Key('uninstall-data-checkbox')),
+    ); // keep my data
+    await t.pump();
+    await t.tap(find.byKey(const Key('uninstall-confirm')));
+    for (var i = 0; i < 6; i++) {
+      await t.pump(const Duration(milliseconds: 200));
+    }
+    expect(find.text(S.uninstallingTitle), findsOneWidget);
+    await t.pump(const Duration(seconds: 5));
+    await t.pump(const Duration(seconds: 2));
+    expect(find.text(S.uninstallDoneTitle), findsOneWidget);
+    expect(find.text(S.uninstallDoneKept), findsOneWidget);
+    expect(fake.ran, [UninstallStep.stopService, UninstallStep.appFiles]);
+    model.dispose();
+  });
+
+  testWidgets('no uninstall section when the platform has no uninstaller', (
+    t,
+  ) async {
+    final (model, _) = await boot(t);
+    await t.tap(find.byKey(const Key('nav-settings')));
+    await t.pumpAndSettle();
+    expect(find.byKey(const Key('uninstall-button')), findsNothing);
     model.dispose();
   });
 

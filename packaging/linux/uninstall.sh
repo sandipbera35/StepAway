@@ -3,7 +3,8 @@
 set -eu
 pkill -x stepawayd 2>/dev/null || true
 rm -rf "$HOME/.local/share/stepaway/app"
-rm -f "$HOME/.local/share/applications/io.github.sandipbera35.StepAway.desktop" \
+rm -f "$HOME/.local/share/icons/hicolor/scalable/apps/io.github.sandipbera35.StepAway.svg" \
+  "$HOME/.local/share/applications/io.github.sandipbera35.StepAway.desktop" \
   "$HOME/.config/autostart/io.github.sandipbera35.StepAway.Daemon.desktop"
 if [ "${1:-}" = "--purge" ]; then
   rm -rf "$HOME/.config/stepaway" "$HOME/.local/share/stepaway"
