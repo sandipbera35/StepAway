@@ -80,6 +80,8 @@ class S {
   static const aboutBody =
       'StepAway is free and open source (GPL-3.0). Everything stays on your devices: no accounts, no servers, no tracking.';
   static const privacyPolicy = 'Privacy policy';
+  static const phoneReady =
+      'This phone is ready. If your computer does not react, open the Health check on its dashboard.';
   static const skip = 'Skip';
   static const next = 'Next';
   static const getStarted = 'Get started';

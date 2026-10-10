@@ -22,6 +22,9 @@ pub struct Settings {
     pub return_grace_s: u64,
     pub lost_timeout_s: u64,
     pub unlock_enabled: bool,
+    /// Extra safety for unlock: only unlock when the phone itself says it is unlocked (its signal
+    /// carries that flag). Off by default, because phones are usually locked in a pocket.
+    pub unlock_requires_phone_unlocked: bool,
     pub tx_power_1m: f64,
     pub path_loss_n: f64,
     pub desktop_name: String,
@@ -53,6 +56,7 @@ impl Default for Settings {
             return_grace_s: 3,
             lost_timeout_s: 10,
             unlock_enabled: false,
+            unlock_requires_phone_unlocked: false,
             tx_power_1m: -59.0,
             path_loss_n: 2.0,
             desktop_name: default_name(),

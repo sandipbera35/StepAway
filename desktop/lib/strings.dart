@@ -237,6 +237,10 @@ class S {
     UninstallStep.data => 'Deleting paired devices, settings and logs',
   };
 
+  static const phoneUnlockedTitle = 'Only when my phone is unlocked';
+  static const phoneUnlockedSubtitle =
+      'Extra safety: the computer only unlocks while your phone screen is unlocked too, so a phone locked in a stranger\'s hand or pocket cannot open it.';
+
   // ---- health check ----
   static const healthTitle = 'Health check';
   static const healthAllGood = 'Everything is set up';
@@ -274,6 +278,9 @@ class S {
       'StepAway only unlocks a lock it made itself. Sign in manually this time.';
   static const hUnlockTooFar = 'Your device is not close enough yet';
   static const hUnlockTooFarFix = 'Come within the "counts as back" distance.';
+  static const hUnlockPhoneLocked = 'Waiting for you to unlock your phone';
+  static const hUnlockPhoneLockedFix =
+      'Unlock the phone screen so it can confirm it is you, or turn this safety rule off in Settings.';
   static const hUnlockGrace = 'Waiting a moment to be sure you are back';
   static const hUnlockGraceFix = 'Stay close for a second or two.';
   static const hUnlockAuth = 'Waiting for a fresh signed signal from the phone';

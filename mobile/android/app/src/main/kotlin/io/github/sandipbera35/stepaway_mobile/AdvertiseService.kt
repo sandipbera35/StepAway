@@ -48,12 +48,33 @@ class AdvertiseService : Service() {
         }
     }
 
+    /** Refresh the "phone is unlocked" flag at once when the user unlocks or the screen turns off. */
+    private val screenReceiver = object : BroadcastReceiver() {
+        override fun onReceive(c: Context, i: Intent) {
+            when (i.action) {
+                Intent.ACTION_USER_PRESENT -> rotateNow()
+                // the keyguard engages a moment after the screen goes off
+                Intent.ACTION_SCREEN_OFF -> {
+                    handler.removeCallbacks(rotate)
+                    handler.postDelayed(rotate, 1500)
+                }
+            }
+        }
+    }
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
         store = PairingStore(this)
         registerReceiver(btReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
+        registerReceiver(
+            screenReceiver,
+            IntentFilter().apply {
+                addAction(Intent.ACTION_USER_PRESENT)
+                addAction(Intent.ACTION_SCREEN_OFF)
+            }
+        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -73,6 +94,7 @@ class AdvertiseService : Service() {
         handler.removeCallbacks(rotate)
         stopAll()
         runCatching { unregisterReceiver(btReceiver) }
+        runCatching { unregisterReceiver(screenReceiver) }
         state.advertising = false
         super.onDestroy()
     }

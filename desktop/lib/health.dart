@@ -83,6 +83,12 @@ List<HealthCheck> healthChecks(DaemonModel m) {
       S.hUnlockGrace,
       S.hUnlockGraceFix,
     ),
+    'phone_locked' => const HealthCheck(
+      'unlock',
+      info,
+      S.hUnlockPhoneLocked,
+      S.hUnlockPhoneLockedFix,
+    ),
     'needs_fresh_auth' => const HealthCheck(
       'unlock',
       info,

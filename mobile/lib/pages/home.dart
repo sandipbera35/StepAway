@@ -185,6 +185,16 @@ class HomePage extends StatelessWidget {
           actionLabel: S.openSettings,
           onAction: app.native.batterySettings,
         ),
+      if (s.protection &&
+          s.advertising &&
+          s.bluetoothOn &&
+          s.permissionsGranted)
+        Notice(
+          key: const Key('phone-ready'),
+          icon: Icons.check_circle_rounded,
+          color: c.success,
+          text: S.phoneReady,
+        ),
       const SizedBox(height: 14),
       Reveal(
         index: 2,

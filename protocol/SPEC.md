@@ -95,7 +95,7 @@ Methods:
 
 | Method | Params | Result |
 |---|---|---|
-| `status` | – | `{protocol: 1, version: "x.y.z" (daemon release, informational), state, paused, scanning, unlock_enabled, unlock_block: null | "disabled" \| "paused" \| "first_login" \| "not_our_lock" \| "no_signal" \| "too_far" \| "return_grace" \| "needs_fresh_auth" (why unlock is not happening now; informational), devices_present: [device_id], capabilities: {media, services}}` |
+| `status` | – | `{protocol: 1, version: "x.y.z" (daemon release, informational), state, paused, scanning, unlock_enabled, unlock_block: null | "disabled" \| "paused" \| "first_login" \| "not_our_lock" \| "no_signal" \| "too_far" \| "return_grace" \| "needs_fresh_auth" \| "phone_locked" (why unlock is not happening now; informational), devices_present: [device_id], capabilities: {media, services}}` |
 | `listDevices` | – | `[{device_id, name, kind, paired_at, last_seen, presence_only, address, calibrated}]` (never the secret) |
 | `startPairing` | `{name?, kind?}` (`kind`: `phone`, `tablet`, `watch`, `other`; default `phone`) | `{qr_uri, verification_code, expires_at}` |
 | `confirmPairing` | `{device_id}` | `{ok}` |
@@ -126,6 +126,7 @@ Besides locking, the daemon can run actions when **it** locks the computer (neve
 
 | Key | Type | Meaning |
 |---|---|---|
+| `unlock_requires_phone_unlocked` | bool | Extra unlock safety (default false): only unlock when the verified token's flag bit 0 says the phone is unlocked (§1.2). A token from a locked phone then counts only as a keep-alive. |
 | `lock_pause_media` | bool | Pause every playing media player (MPRIS on Linux, system media transport controls on Windows). |
 | `unlock_resume_media` | bool | After unlock, resume only the players StepAway paused and that are still paused. |
 | `lock_stop_services` | string[] (max 32) | systemd *user* units (`*.service`) to stop on lock. Names must match `[A-Za-z0-9._:@\-]+\.service`, must not start with `-`, and must not be session-critical (`dbus*`, `systemd*`, `gnome-shell*`, `plasma*`, `pipewire*`, `xdg-desktop-portal*`, `stepawayd*`, ...). The daemon passes the name after `--` and never through a shell. |

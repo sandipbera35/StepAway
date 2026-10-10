@@ -67,13 +67,14 @@ void main() {
       'too_far',
       'return_grace',
       'needs_fresh_auth',
+      'phone_locked',
     ]) {
       final u = _find(healthChecks(_model(block: b)), 'unlock');
       expect(u.level, HealthLevel.info, reason: b);
       expect(u.fix, isNotNull, reason: b);
       titles.add(u.title);
     }
-    expect(titles, hasLength(6));
+    expect(titles, hasLength(7));
   });
 
   test('"paused" and "no_signal" are not repeated as an unlock row', () {

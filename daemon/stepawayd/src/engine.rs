@@ -194,6 +194,8 @@ pub struct Engine {
     filters: HashMap<u16, RssiFilter>,
     presence: HashMap<u16, Seen>,
     nearby: HashMap<String, Nearby>,
+    /// Flags of the latest verified token per device (bit 0: the phone is unlocked).
+    flags: HashMap<u16, u8>,
     pending: Option<Pending>,
     pending_code: Option<PendingCode>,
     calib: Option<Calib>,
@@ -222,6 +224,7 @@ impl Engine {
             filters: HashMap::new(),
             presence: HashMap::new(),
             nearby: HashMap::new(),
+            flags: HashMap::new(),
             pending: None,
             pending_code: None,
             calib: None,
@@ -241,7 +244,14 @@ impl Engine {
 
     /// Why unlock is not happening right now (see `Machine::unlock_block`).
     pub fn unlock_block(&self, now_ms: u64) -> Option<UnlockBlock> {
-        self.machine.unlock_block(now_ms)
+        match self.machine.unlock_block(now_ms) {
+            // The machine only knows "no fresh signed signal"; with the phone-unlocked rule on,
+            // that is more precisely "the phone is locked".
+            Some(UnlockBlock::NeedsFreshAuth) if self.settings.unlock_requires_phone_unlocked => {
+                Some(UnlockBlock::PhoneLocked)
+            }
+            other => other,
+        }
     }
 
     pub fn paused(&self) -> bool {
@@ -545,7 +555,11 @@ impl Engine {
                     d.last_counter = Some(acc.counter);
                 }
                 self.save_store();
-                true
+                self.flags.insert(id, acc.flags);
+                // With the extra rule on, a token from a locked phone is only a keep-alive:
+                // it can keep the computer unlocked but never unlocks it.
+                !self.settings.unlock_requires_phone_unlocked
+                    || acc.flags & token::FLAG_PHONE_UNLOCKED != 0
             }
             Err(VerifyError::Replay) => false, // same window: valid keep-alive
             Err(_) => return out,              // anything else: ignore (never unlock on doubt)
@@ -747,6 +761,7 @@ impl Engine {
         }
         self.filters.remove(&id);
         self.presence.remove(&id);
+        self.flags.remove(&id);
         self.save_store();
         Ok(())
     }
@@ -933,6 +948,53 @@ mod tests {
                     .effects,
             );
         }
+        assert_eq!(effects, vec![Effect::Lock, Effect::Unlock]);
+    }
+
+    fn adv_flags(secret: &Secret, id: u16, t: u64, rssi: i16, flags: u8) -> Advertisement {
+        Advertisement {
+            rssi,
+            payload: build_payload(secret, id, flags, t),
+        }
+    }
+
+    fn walk_away_and_back(e: &mut Engine, s: &Secret, flags: u8) -> Vec<Effect> {
+        let mut effects = Vec::new();
+        for i in 0..140u64 {
+            let rssi = if (20..80).contains(&i) { FAR } else { NEAR };
+            // a new signed token every window (10 s): use distinct counters via the time
+            let t = T0 + i * 10;
+            effects.extend(
+                e.on_advertisement(&adv_flags(s, 0x0102, t, rssi, flags), t, i * 1000)
+                    .effects,
+            );
+        }
+        effects
+    }
+
+    #[test]
+    fn locked_phone_does_not_unlock_when_the_rule_is_on() {
+        let (mut e, s) = engine(true);
+        e.set_settings(&serde_json::json!({"unlock_requires_phone_unlocked": true}))
+            .unwrap();
+        let effects = walk_away_and_back(&mut e, &s, 0); // phone locked in the pocket
+        assert_eq!(effects, vec![Effect::Lock], "must stay locked");
+        assert_eq!(e.unlock_block(139_000), Some(UnlockBlock::PhoneLocked));
+    }
+
+    #[test]
+    fn unlocked_phone_unlocks_when_the_rule_is_on() {
+        let (mut e, s) = engine(true);
+        e.set_settings(&serde_json::json!({"unlock_requires_phone_unlocked": true}))
+            .unwrap();
+        let effects = walk_away_and_back(&mut e, &s, token::FLAG_PHONE_UNLOCKED);
+        assert_eq!(effects, vec![Effect::Lock, Effect::Unlock]);
+    }
+
+    #[test]
+    fn locked_phone_still_unlocks_when_the_rule_is_off() {
+        let (mut e, s) = engine(true);
+        let effects = walk_away_and_back(&mut e, &s, 0);
         assert_eq!(effects, vec![Effect::Lock, Effect::Unlock]);
     }
 

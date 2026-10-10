@@ -306,6 +306,31 @@ void main() {
     model.dispose();
   });
 
+  testWidgets('the phone-unlocked safety switch needs unlock to be on', (
+    t,
+  ) async {
+    final (model, d) = await boot(t);
+    await t.tap(find.byKey(const Key('nav-settings')));
+    await t.pumpAndSettle();
+    await t.ensureVisible(find.byKey(const Key('phone-unlocked-switch')));
+    await t.pumpAndSettle();
+    expect(
+      t
+          .widget<SwitchListTile>(
+            find.byKey(const Key('phone-unlocked-switch')),
+          )
+          .onChanged,
+      isNull, // unlock is off in the fake daemon
+    );
+    d.config = {...d.config, 'unlock_enabled': true};
+    await model.refresh();
+    await t.pumpAndSettle();
+    await t.tap(find.byKey(const Key('phone-unlocked-switch')));
+    await t.pumpAndSettle();
+    expect(d.config['unlock_requires_phone_unlocked'], true);
+    model.dispose();
+  });
+
   testWidgets('About tab shows the version and opens the privacy policy', (
     t,
   ) async {

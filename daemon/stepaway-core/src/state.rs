@@ -37,6 +37,9 @@ pub enum UnlockBlock {
     ReturnGrace,
     /// Close and long enough, but no freshly signed signal since arriving.
     NeedsFreshAuth,
+    /// Unlock needs the phone to be unlocked and it is not. Only reported by the engine, which
+    /// knows the phone's flag; the state machine itself does not see it.
+    PhoneLocked,
 }
 
 impl UnlockBlock {
@@ -51,6 +54,7 @@ impl UnlockBlock {
             UnlockBlock::TooFar => "too_far",
             UnlockBlock::ReturnGrace => "return_grace",
             UnlockBlock::NeedsFreshAuth => "needs_fresh_auth",
+            UnlockBlock::PhoneLocked => "phone_locked",
         }
     }
 }

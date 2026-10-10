@@ -565,6 +565,21 @@ class SettingsPage extends StatelessWidget {
                         ? (on) => _toggleUnlock(context, on)
                         : null,
                   ),
+                  SwitchListTile(
+                    key: const Key('phone-unlocked-switch'),
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text(
+                      S.phoneUnlockedTitle,
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: const Text(S.phoneUnlockedSubtitle),
+                    value: model.unlockRequiresPhoneUnlocked,
+                    onChanged: model.connected && model.unlockEnabled
+                        ? (on) => _set(context, {
+                            'unlock_requires_phone_unlocked': on,
+                          })
+                        : null,
+                  ),
                 ]),
                 if (model.uninstaller != null)
                   _section(context, 7, S.uninstallSection, [

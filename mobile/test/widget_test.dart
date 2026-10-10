@@ -142,6 +142,35 @@ void main() {
     },
   );
 
+  testWidgets('the home screen says when the phone side is ready', (t) async {
+    await pumpApp(
+      t,
+      FakeNative(
+        status_: const AppStatus(
+          protection: true,
+          advertising: true,
+          pairings: [PairingInfo(1, 'My PC')],
+        ),
+      ),
+    );
+    expect(find.byKey(const Key('phone-ready')), findsOneWidget);
+  });
+
+  testWidgets('no "ready" message while something is wrong', (t) async {
+    await pumpApp(
+      t,
+      FakeNative(
+        status_: const AppStatus(
+          protection: true,
+          advertising: true,
+          bluetoothOn: false,
+          pairings: [PairingInfo(1, 'My PC')],
+        ),
+      ),
+    );
+    expect(find.byKey(const Key('phone-ready')), findsNothing);
+  });
+
   testWidgets('tabs switch with the glass navigation bar', (t) async {
     await pumpApp(t, FakeNative());
     await t.tap(find.byKey(const Key('nav-computers')));

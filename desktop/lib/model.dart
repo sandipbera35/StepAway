@@ -135,6 +135,8 @@ class DaemonModel extends ChangeNotifier {
   double get returnDistance =>
       (config['return_distance_m'] as num?)?.toDouble() ?? 2.0;
   bool get unlockEnabled => config['unlock_enabled'] == true;
+  bool get unlockRequiresPhoneUnlocked =>
+      config['unlock_requires_phone_unlocked'] == true;
   bool get calibrated => config['calibrated'] == true;
   bool get beaconEnabled => config['beacon_enabled'] != false;
   String get presenceRule => config['presence_rule'] == 'all' ? 'all' : 'any';
