@@ -11,7 +11,7 @@ use stepaway_core::distance::DistanceModel;
 use stepaway_core::filter::RssiFilter;
 use stepaway_core::offer::{self, Reassembler};
 use stepaway_core::pairing::pairing_uri;
-use stepaway_core::state::{Action, Input, Machine, State};
+use stepaway_core::state::{Action, Input, Machine, State, UnlockBlock};
 use stepaway_core::token::{self, Secret, VerifyError};
 
 use crate::config::Settings;
@@ -237,6 +237,11 @@ impl Engine {
 
     pub fn state(&self) -> State {
         self.machine.state()
+    }
+
+    /// Why unlock is not happening right now (see `Machine::unlock_block`).
+    pub fn unlock_block(&self, now_ms: u64) -> Option<UnlockBlock> {
+        self.machine.unlock_block(now_ms)
     }
 
     pub fn paused(&self) -> bool {

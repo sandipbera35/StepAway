@@ -236,4 +236,47 @@ class S {
     UninstallStep.shortcuts => 'Removing shortcuts',
     UninstallStep.data => 'Deleting paired devices, settings and logs',
   };
+
+  // ---- health check ----
+  static const healthTitle = 'Health check';
+  static const healthAllGood = 'Everything is set up';
+  static String healthIssues(int n) =>
+      n == 1 ? '1 thing needs attention' : '$n things need attention';
+  static const hServiceOk = 'Background service is running';
+  static const hServiceBad = 'The background service is not running';
+  static const hServiceFix =
+      'Press "Start service" at the top, or restart StepAway.';
+  static const hScanOk = 'Bluetooth is scanning';
+  static const hScanBad = 'Bluetooth scanning is not active';
+  static const hScanFix = 'Turn Bluetooth on, then restart StepAway.';
+  static const hPairedOk = 'A device is paired';
+  static const hPairedBad = 'No device is paired';
+  static const hPairedFix = 'Open Devices and add your phone.';
+  static const hSignalOk = "Your device's signal is being received";
+  static const hSignalBad = 'No signal from your device';
+  static const hSignalFix =
+      'Open StepAway on the phone, switch protection on and keep Bluetooth on.';
+  static const hCalibOk = 'Distance is calibrated';
+  static const hCalibBad = 'Distance is not calibrated yet';
+  static const hCalibFix = 'Run Calibrate once for accurate distances.';
+  static const hActiveOk = 'Protection is active';
+  static const hActiveBad = 'Protection is paused';
+  static const hActiveFix = 'Press "Resume protection".';
+  static const hUnlockReady = 'Unlock is ready';
+  static const hUnlockOff = 'Unlock is switched off (lock only)';
+  static const hUnlockOffFix =
+      'Turn on unlock in Settings if you want the computer to open when you return.';
+  static const hUnlockFirstLogin = 'Unlock waits until you have signed in once';
+  static const hUnlockFirstLoginFix =
+      'For safety StepAway never unlocks right after the computer starts. Sign in with your password once.';
+  static const hUnlockNotOurLock = 'The screen was locked by something else';
+  static const hUnlockNotOurLockFix =
+      'StepAway only unlocks a lock it made itself. Sign in manually this time.';
+  static const hUnlockTooFar = 'Your device is not close enough yet';
+  static const hUnlockTooFarFix = 'Come within the "counts as back" distance.';
+  static const hUnlockGrace = 'Waiting a moment to be sure you are back';
+  static const hUnlockGraceFix = 'Stay close for a second or two.';
+  static const hUnlockAuth = 'Waiting for a fresh signed signal from the phone';
+  static const hUnlockAuthFix =
+      'The phone sends a new one every few seconds. If this stays, check that protection is on in the phone app.';
 }

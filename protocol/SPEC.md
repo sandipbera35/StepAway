@@ -95,7 +95,7 @@ Methods:
 
 | Method | Params | Result |
 |---|---|---|
-| `status` | – | `{protocol: 1, version: "x.y.z" (daemon release, informational), state, paused, scanning, unlock_enabled, devices_present: [device_id], capabilities: {media, services}}` |
+| `status` | – | `{protocol: 1, version: "x.y.z" (daemon release, informational), state, paused, scanning, unlock_enabled, unlock_block: null | "disabled" \| "paused" \| "first_login" \| "not_our_lock" \| "no_signal" \| "too_far" \| "return_grace" \| "needs_fresh_auth" (why unlock is not happening now; informational), devices_present: [device_id], capabilities: {media, services}}` |
 | `listDevices` | – | `[{device_id, name, kind, paired_at, last_seen, presence_only, address, calibrated}]` (never the secret) |
 | `startPairing` | `{name?, kind?}` (`kind`: `phone`, `tablet`, `watch`, `other`; default `phone`) | `{qr_uri, verification_code, expires_at}` |
 | `confirmPairing` | `{device_id}` | `{ok}` |

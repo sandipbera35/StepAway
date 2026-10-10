@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stepaway_ui/stepaway_ui.dart';
 
+import '../health.dart';
 import '../model.dart';
 import '../strings.dart';
 import '../widgets.dart';
@@ -331,7 +332,16 @@ class DashboardPage extends StatelessWidget {
               );
         return ListView(
           padding: EdgeInsets.only(bottom: size.isCompact ? 96 : 0),
-          children: [header, const SizedBox(height: 20), ?banner, body],
+          children: [
+            header,
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: HealthCard(model: model),
+            ),
+            ?banner,
+            body,
+          ],
         );
       },
     );

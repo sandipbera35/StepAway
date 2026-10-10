@@ -18,6 +18,43 @@ pub enum State {
     Override,
 }
 
+/// A reason unlock is not happening (see `Machine::unlock_block`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum UnlockBlock {
+    /// The user has not turned unlock on.
+    Disabled,
+    /// Protection is paused.
+    Paused,
+    /// No unlock until the user has logged in once since the daemon started.
+    FirstLogin,
+    /// The session was locked by something other than StepAway.
+    NotOurLock,
+    /// No signal from a trusted device recently.
+    NoSignal,
+    /// The device is farther away than the return distance.
+    TooFar,
+    /// The device is close, but not for long enough yet.
+    ReturnGrace,
+    /// Close and long enough, but no freshly signed signal since arriving.
+    NeedsFreshAuth,
+}
+
+impl UnlockBlock {
+    /// Stable name used on the IPC interface.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            UnlockBlock::Disabled => "disabled",
+            UnlockBlock::Paused => "paused",
+            UnlockBlock::FirstLogin => "first_login",
+            UnlockBlock::NotOurLock => "not_our_lock",
+            UnlockBlock::NoSignal => "no_signal",
+            UnlockBlock::TooFar => "too_far",
+            UnlockBlock::ReturnGrace => "return_grace",
+            UnlockBlock::NeedsFreshAuth => "needs_fresh_auth",
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Action {
     None,
@@ -113,6 +150,41 @@ impl Machine {
 
     pub fn state(&self) -> State {
         self.state
+    }
+
+    /// Why the computer would not be unlocked right now, if it were locked by us: the first rule
+    /// in the same order `evaluate` applies them. `None` means every condition is met. Used to
+    /// tell the user why unlock is not happening; it never changes behaviour.
+    pub fn unlock_block(&self, now_ms: u64) -> Option<UnlockBlock> {
+        if !self.cfg.unlock_enabled {
+            return Some(UnlockBlock::Disabled);
+        }
+        if self.paused {
+            return Some(UnlockBlock::Paused);
+        }
+        if !self.unlock_allowed {
+            return Some(UnlockBlock::FirstLogin);
+        }
+        if self.external_lock {
+            return Some(UnlockBlock::NotOurLock);
+        }
+        let lost = match self.last_seen {
+            None => true,
+            Some(seen) => now_ms.saturating_sub(seen) > self.cfg.lost_timeout_ms,
+        };
+        if lost {
+            return Some(UnlockBlock::NoSignal);
+        }
+        if self.zone != Some(Zone::Near) {
+            return Some(UnlockBlock::TooFar);
+        }
+        if now_ms.saturating_sub(self.zone_since) < self.cfg.return_grace_ms {
+            return Some(UnlockBlock::ReturnGrace);
+        }
+        if !self.last_auth.is_some_and(|a| a >= self.zone_since) {
+            return Some(UnlockBlock::NeedsFreshAuth);
+        }
+        None
     }
 
     fn set_zone(&mut self, z: Zone, now: u64) {
@@ -380,5 +452,71 @@ mod tests {
         assert_eq!(m.step(s(60_000, 9.0)), Action::None);
         m.step(Input::Resume);
         assert_eq!(m.state(), State::Near);
+    }
+
+    #[test]
+    fn unlock_block_names_the_first_unmet_rule() {
+        // default config: unlock is off
+        let m = Machine::new(Config::default(), true);
+        assert_eq!(m.unlock_block(0), Some(UnlockBlock::Disabled));
+
+        let m = locked_with_unlock(false);
+        assert_eq!(m.unlock_block(20_000), Some(UnlockBlock::FirstLogin));
+
+        let mut m = locked_with_unlock(true);
+        // phone far away at the moment of locking
+        m.step(Input::Tick { now_ms: 14_000 });
+        assert_eq!(m.unlock_block(14_000), Some(UnlockBlock::TooFar));
+        // no samples for longer than the lost timeout
+        assert_eq!(m.unlock_block(60_000), Some(UnlockBlock::NoSignal));
+        m.step(s(21_000, 1.0));
+        assert_eq!(m.unlock_block(21_500), Some(UnlockBlock::ReturnGrace));
+        assert_eq!(m.unlock_block(25_000), None);
+
+        m.step(Input::Pause);
+        assert_eq!(m.unlock_block(25_000), Some(UnlockBlock::Paused));
+    }
+
+    #[test]
+    fn unlock_block_needs_fresh_auth_and_ignores_external_locks() {
+        let mut m = locked_with_unlock(true);
+        m.step(Input::Sample {
+            now_ms: 21_000,
+            distance_m: 1.0,
+            auth_fresh: false,
+        });
+        assert_eq!(m.unlock_block(25_000), Some(UnlockBlock::NeedsFreshAuth));
+
+        let cfg = Config {
+            unlock_enabled: true,
+            ..Config::default()
+        };
+        let mut m = Machine::new(cfg, true);
+        m.step(Input::SessionLocked); // someone else locked it
+        assert_eq!(m.unlock_block(0), Some(UnlockBlock::NotOurLock));
+    }
+
+    #[test]
+    fn unlock_block_agrees_with_what_the_machine_does() {
+        // Invariant: after any step, a machine that is still Locked must report a reason;
+        // if it reported none, `evaluate` would already have unlocked it.
+        let mut m = locked_with_unlock(true);
+        let mut unlocked = false;
+        for t in (15_000..40_000).step_by(500) {
+            // far for the first 6 s, then close, with a fresh signed sample each time
+            let d = if t < 21_000 { 8.0 } else { 1.0 };
+            let a = m.step(s(t, d));
+            if a == Action::Unlock {
+                unlocked = true;
+                break;
+            }
+            if m.state() == State::Locked {
+                assert!(m.unlock_block(t).is_some(), "locked with no reason at {t}");
+            }
+        }
+        assert!(
+            unlocked,
+            "the machine should unlock once the device is back"
+        );
     }
 }

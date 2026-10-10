@@ -108,6 +108,9 @@ class DaemonModel extends ChangeNotifier {
   bool capApps = false;
   bool capBeacon = false;
   String? daemonVersion;
+
+  /// Why unlock is not happening right now (daemon `unlock_block`), or null when it would.
+  String? unlockBlock;
   Map<String, dynamic> config = {};
   List<PairedDevice> phones = [];
   List<int> present = [];
@@ -203,6 +206,7 @@ class DaemonModel extends ChangeNotifier {
       capApps = caps['apps'] == true;
       capBeacon = caps['beacon'] == true;
       daemonVersion = s['version'] as String?;
+      unlockBlock = s['unlock_block'] as String?;
       present = [
         for (final v in (s['devices_present'] as List? ?? const []))
           (v as num).toInt(),

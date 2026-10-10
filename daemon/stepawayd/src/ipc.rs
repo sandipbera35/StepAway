@@ -136,6 +136,7 @@ pub fn dispatch(shared: &Shared, method: &str, params: &Value) -> RpcResult {
                 "paused": e.paused(),
                 "scanning": shared.scanning.load(Ordering::Relaxed),
                 "unlock_enabled": e.settings().unlock_enabled,
+                "unlock_block": e.unlock_block(shared.now_ms()).map(|b| b.as_str()),
                 "presence_rule": e.settings().presence_rule,
                 "capabilities": {
                     "media": shared.caps_media.load(Ordering::Relaxed),
@@ -500,6 +501,8 @@ mod tests {
         assert_eq!(v["result"][0]["running"], true);
         let st = call(&s, json!({"jsonrpc":"2.0","id":6,"method":"status"}));
         assert_eq!(st["result"]["version"], env!("CARGO_PKG_VERSION"));
+        // unlock is off by default, so that is the reason reported
+        assert_eq!(st["result"]["unlock_block"], "disabled");
         assert_eq!(st["result"]["capabilities"]["media"], true);
         assert_eq!(st["result"]["capabilities"]["apps"], true);
         assert_eq!(st["result"]["capabilities"]["services"], false);
