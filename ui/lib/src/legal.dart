@@ -24,6 +24,8 @@ const kSecurityUrl = 'https://github.com/sandipbera35/StepAway/security/policy';
 const kPrivacyUrl =
     'https://github.com/sandipbera35/StepAway/blob/main/PRIVACY.md';
 const kLicenseUrl = 'https://www.gnu.org/licenses/gpl-3.0.html';
+const kTrademarkUrl =
+    'https://github.com/sandipbera35/StepAway/blob/main/TRADEMARK.md';
 const kPrivacyUpdated = '10 October 2026';
 
 /// Adds licenses Flutter cannot discover by itself to the "Open-source licenses" page.
@@ -156,6 +158,10 @@ const kWarrantyNotice =
     'of the License, or (at your option) any later version. It is distributed in the hope that '
     'it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of '
     'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
+
+const kTrademarkNotice =
+    'The name StepAway and its logo are not covered by the GPL. Modified versions must use '
+    'their own name and logo.';
 
 const kProximityNotice =
     'Distance is estimated from Bluetooth signal strength and can be wrong. StepAway is a '
@@ -338,9 +344,19 @@ class AboutContent extends StatelessWidget {
                 Text(kCopyright, style: theme.textTheme.bodySmall),
                 const SizedBox(height: 12),
                 Text(kWarrantyNotice, style: theme.textTheme.bodySmall),
-                TextButton(
-                  onPressed: () => onOpenLink(kLicenseUrl),
-                  child: const Text('Read the full license'),
+                const SizedBox(height: 8),
+                Text(kTrademarkNotice, style: theme.textTheme.bodySmall),
+                Wrap(
+                  children: [
+                    TextButton(
+                      onPressed: () => onOpenLink(kLicenseUrl),
+                      child: const Text('Read the full license'),
+                    ),
+                    TextButton(
+                      onPressed: () => onOpenLink(kTrademarkUrl),
+                      child: const Text('Name and logo policy'),
+                    ),
+                  ],
                 ),
               ],
             ),
