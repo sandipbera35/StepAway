@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.sandipbera35.StepAway</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>StepAway</name>
+  <summary>Lock your computer when your phone moves away</summary>
+  <description>
+    <p>StepAway locks this computer when your paired Android phone or watch moves out of range, and can optionally unlock it when you come back. Distance is estimated from the Bluetooth signal strength.</p>
+    <p>Everything stays on your devices: there are no accounts, no network access and no telemetry.</p>
+    <ul>
+      <li>Lock when your phone is away, switched off or out of range</li>
+      <li>Optional unlock on return, off by default</li>
+      <li>Pair with a QR code; signed rotating tokens</li>
+      <li>Pause media and close chosen apps when locking</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.github.sandipbera35.StepAway.desktop</launchable>
+  <url type="homepage">https://github.com/sandipbera35/StepAway</url>
+  <url type="bugtracker">https://github.com/sandipbera35/StepAway/issues</url>
+  <developer id="io.github.sandipbera35">
+    <name>sandipbera35</name>
+  </developer>
+  <provides>
+    <binary>stepaway</binary>
+  </provides>
+  <categories>
+    <category>Utility</category>
+    <category>Security</category>
+  </categories>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="VERSION" date="2026-10-10"/>
+  </releases>
+</component>

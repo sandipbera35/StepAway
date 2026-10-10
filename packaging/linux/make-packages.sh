@@ -20,10 +20,11 @@ work=$(mktemp -d); trap 'rm -rf "$work"' EXIT
 
 # Shared file tree: app in /opt/stepaway, launcher in /usr/bin, desktop entry + icon.
 tree="$work/tree"
-install -d "$tree/opt" "$tree/usr/bin" "$tree/usr/share/applications" "$tree/usr/share/icons/hicolor/scalable/apps" "$tree/usr/share/doc/stepaway"
+install -d "$tree/opt" "$tree/usr/bin" "$tree/usr/share/applications" "$tree/usr/share/icons/hicolor/scalable/apps" "$tree/usr/share/doc/stepaway" "$tree/usr/share/metainfo"
 cp -r "$bundle" "$tree/opt/stepaway"
 ln -s /opt/stepaway/stepaway_desktop "$tree/usr/bin/stepaway"
 install -m 644 "$here/$id.svg" "$tree/usr/share/icons/hicolor/scalable/apps/$id.svg"
+sed "s/VERSION/$ver/" "$here/$id.metainfo.xml" > "$tree/usr/share/metainfo/$id.metainfo.xml"
 install -m 644 "$root/LICENSE" "$tree/usr/share/doc/stepaway/copyright"
 cat > "$tree/usr/share/applications/$id.desktop" <<DESKTOP
 [Desktop Entry]
@@ -88,6 +89,7 @@ pkill -x stepawayd 2>/dev/null || :
 /opt/stepaway
 /usr/bin/stepaway
 /usr/share/applications/$id.desktop
+/usr/share/metainfo/$id.metainfo.xml
 /usr/share/icons/hicolor/scalable/apps/$id.svg
 %license /usr/share/doc/stepaway/copyright
 SPEC

@@ -166,6 +166,7 @@ class LinuxUninstaller implements Uninstaller {
               );
             }
           }
+          if (dir.listSync().isEmpty) await dir.delete();
         }
         return StepStatus.done;
       case UninstallStep.appFiles:
