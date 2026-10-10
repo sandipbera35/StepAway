@@ -16,6 +16,7 @@ class AppController extends ChangeNotifier {
   AppStatus status = const AppStatus();
   bool statusLoaded = false;
   Timer? _timer;
+  String _freshSignature = '';
 
   // ---- distance to the computer (measured from its beacon) ----
   final Map<int, DistanceTracker> trackers = {};
@@ -121,9 +122,15 @@ class AppController extends ChangeNotifier {
 
   Future<void> refresh() async {
     try {
-      status = await native.status();
+      final next = await native.status();
+      // Rebuild only when something visible changed: the status, or a beacon going stale/fresh.
+      final fresh = [for (final t in trackers.values) t.isFresh].join();
+      final changed =
+          !statusLoaded || !status.sameAs(next) || fresh != _freshSignature;
+      _freshSignature = fresh;
+      status = next;
       statusLoaded = true;
-      notifyListeners();
+      if (changed) notifyListeners();
     } catch (_) {
       // keep the last known status
     }

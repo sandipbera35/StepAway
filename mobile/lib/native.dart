@@ -35,6 +35,19 @@ class AppStatus {
   final bool batteryUnrestricted;
   final List<PairingInfo> pairings;
 
+  /// True when nothing the UI shows has changed, so a poll does not rebuild the screen.
+  bool sameAs(AppStatus o) =>
+      protection == o.protection &&
+      advertising == o.advertising &&
+      error == o.error &&
+      bluetoothOn == o.bluetoothOn &&
+      permissionsGranted == o.permissionsGranted &&
+      scanGranted == o.scanGranted &&
+      batteryUnrestricted == o.batteryUnrestricted &&
+      pairings.length == o.pairings.length &&
+      [for (final p in pairings) '${p.id}:${p.name}'].join('|') ==
+          [for (final p in o.pairings) '${p.id}:${p.name}'].join('|');
+
   factory AppStatus.fromMap(Map<dynamic, dynamic> m) {
     final perms = (m['permissions'] as Map?) ?? const {};
     final needed = [

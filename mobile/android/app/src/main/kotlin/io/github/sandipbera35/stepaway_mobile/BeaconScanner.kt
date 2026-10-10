@@ -38,7 +38,7 @@ class BeaconScanner(private val context: Context, private val store: PairingStor
         }
         return try {
             // no filter: service-data filters are unreliable across phones, and we only scan while visible
-            scanner.startScan(null, ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build(), cb)
+            scanner.startScan(null, ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_BALANCED).build(), cb)
             callback = cb
             true
         } catch (e: SecurityException) {

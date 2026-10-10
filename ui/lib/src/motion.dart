@@ -199,21 +199,24 @@ class _RipplesState extends State<Ripples> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.size,
-      height: widget.size,
-      child: AnimatedBuilder(
-        animation: _ctl,
-        builder: (context, child) => CustomPaint(
-          painter: _RipplePainter(
-            widget.active ? _ctl.value : 0,
-            widget.color,
-            widget.rings,
-            widget.active,
+    // Own layer: the rings repaint every frame and must not drag the blurred glass around them.
+    return RepaintBoundary(
+      child: SizedBox(
+        width: widget.size,
+        height: widget.size,
+        child: AnimatedBuilder(
+          animation: _ctl,
+          builder: (context, child) => CustomPaint(
+            painter: _RipplePainter(
+              widget.active ? _ctl.value : 0,
+              widget.color,
+              widget.rings,
+              widget.active,
+            ),
+            child: Center(child: child),
           ),
-          child: Center(child: child),
+          child: widget.child,
         ),
-        child: widget.child,
       ),
     );
   }
