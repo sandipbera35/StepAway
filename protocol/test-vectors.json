@@ -1,0 +1,342 @@
+{
+  "description": "StepAway protocol test vectors. Version 2 (current): 10 s token window, +/-3 windows accepted. Version 1 (legacy, still accepted): 30 s window, +/-1. See protocol/SPEC.md.",
+  "uuid": "c0de57e9-a4a7-4b1d-9c3e-5a11a0ca7e01",
+  "mac_prefix": "StepAway-adv-v1",
+  "versions": {
+    "1": {
+      "window_secs": 30,
+      "skew_windows": 1
+    },
+    "2": {
+      "window_secs": 10,
+      "skew_windows": 3
+    }
+  },
+  "vectors": [
+    {
+      "name": "zeros",
+      "version": 2,
+      "secret_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+      "device_id": 1,
+      "unix_time": 0,
+      "counter": 0,
+      "ver_flags": "20",
+      "hmac_input_hex": "53746570417761792d6164762d76312000010000000000000000",
+      "mac_hex": "56ee8f7af98800c0",
+      "payload_hex": "200001000056ee8f7af98800c0",
+      "verification_code": "426469"
+    },
+    {
+      "name": "sequential",
+      "version": 2,
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "unix_time": 1700000000,
+      "counter": 170000000,
+      "ver_flags": "20",
+      "hmac_input_hex": "53746570417761792d6164762d7631201234000000000a21fe80",
+      "mac_hex": "d0f47d2a789b0c3e",
+      "payload_hex": "201234fe80d0f47d2a789b0c3e",
+      "verification_code": "589947"
+    },
+    {
+      "name": "ff",
+      "version": 2,
+      "secret_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "device_id": 65535,
+      "unix_time": 1700000009,
+      "counter": 170000000,
+      "ver_flags": "20",
+      "hmac_input_hex": "53746570417761792d6164762d763120ffff000000000a21fe80",
+      "mac_hex": "f30f7fab90afb97f",
+      "payload_hex": "20fffffe80f30f7fab90afb97f",
+      "verification_code": "749694"
+    },
+    {
+      "name": "ff_next_window",
+      "version": 2,
+      "secret_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "device_id": 65535,
+      "unix_time": 1700000010,
+      "counter": 170000001,
+      "ver_flags": "20",
+      "hmac_input_hex": "53746570417761792d6164762d763120ffff000000000a21fe81",
+      "mac_hex": "b673663014c31da0",
+      "payload_hex": "20fffffe81b673663014c31da0",
+      "verification_code": "749694"
+    },
+    {
+      "name": "counter_wrap",
+      "version": 2,
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 7,
+      "unix_time": 655365,
+      "counter": 65536,
+      "ver_flags": "20",
+      "hmac_input_hex": "53746570417761792d6164762d76312000070000000000010000",
+      "mac_hex": "4a74bc4acaa2f4eb",
+      "payload_hex": "20000700004a74bc4acaa2f4eb",
+      "verification_code": "589947"
+    },
+    {
+      "name": "legacy_sequential",
+      "version": 1,
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "unix_time": 1700000000,
+      "counter": 56666666,
+      "ver_flags": "10",
+      "hmac_input_hex": "53746570417761792d6164762d7631101234000000000360aa2a",
+      "mac_hex": "49c325130af7faa9",
+      "payload_hex": "101234aa2a49c325130af7faa9",
+      "verification_code": "589947"
+    },
+    {
+      "name": "legacy_ff",
+      "version": 1,
+      "secret_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "device_id": 65535,
+      "unix_time": 1700000029,
+      "counter": 56666667,
+      "ver_flags": "10",
+      "hmac_input_hex": "53746570417761792d6164762d763110ffff000000000360aa2b",
+      "mac_hex": "5d4f7f4c23b7f545",
+      "payload_hex": "10ffffaa2b5d4f7f4c23b7f545",
+      "verification_code": "749694"
+    },
+    {
+      "name": "legacy_ff_next_window",
+      "version": 1,
+      "secret_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "device_id": 65535,
+      "unix_time": 1700000030,
+      "counter": 56666667,
+      "ver_flags": "10",
+      "hmac_input_hex": "53746570417761792d6164762d763110ffff000000000360aa2b",
+      "mac_hex": "5d4f7f4c23b7f545",
+      "payload_hex": "10ffffaa2b5d4f7f4c23b7f545",
+      "verification_code": "749694"
+    }
+  ],
+  "verify": [
+    {
+      "name": "same_window",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "201234fe80d0f47d2a789b0c3e",
+      "verifier_unix_time": 1700000000,
+      "last_accepted_counter": null,
+      "expect": "accept"
+    },
+    {
+      "name": "prev_window",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "201234fe80d0f47d2a789b0c3e",
+      "verifier_unix_time": 1700000010,
+      "last_accepted_counter": null,
+      "expect": "accept"
+    },
+    {
+      "name": "next_window_skew",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "201234fe81cafe5d49d897ba1c",
+      "verifier_unix_time": 1700000000,
+      "last_accepted_counter": null,
+      "expect": "accept"
+    },
+    {
+      "name": "three_windows_old_still_ok",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "201234fe80d0f47d2a789b0c3e",
+      "verifier_unix_time": 1700000030,
+      "last_accepted_counter": null,
+      "expect": "accept"
+    },
+    {
+      "name": "three_windows_ahead_still_ok",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "201234fe83e61c9ede9460904b",
+      "verifier_unix_time": 1700000000,
+      "last_accepted_counter": null,
+      "expect": "accept"
+    },
+    {
+      "name": "too_old",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "201234fe80d0f47d2a789b0c3e",
+      "verifier_unix_time": 1700000040,
+      "last_accepted_counter": null,
+      "expect": "reject"
+    },
+    {
+      "name": "too_new",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "201234fe8488201f491126edc0",
+      "verifier_unix_time": 1700000000,
+      "last_accepted_counter": null,
+      "expect": "reject"
+    },
+    {
+      "name": "replay_same_counter",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "201234fe80d0f47d2a789b0c3e",
+      "verifier_unix_time": 1700000000,
+      "last_accepted_counter": 170000000,
+      "expect": "reject"
+    },
+    {
+      "name": "older_than_last",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "201234fe80d0f47d2a789b0c3e",
+      "verifier_unix_time": 1700000010,
+      "last_accepted_counter": 170000001,
+      "expect": "reject"
+    },
+    {
+      "name": "wrong_device_id",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 17185,
+      "payload_hex": "201234fe80d0f47d2a789b0c3e",
+      "verifier_unix_time": 1700000000,
+      "last_accepted_counter": null,
+      "expect": "reject"
+    },
+    {
+      "name": "legacy_same_window",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "101234aa2a49c325130af7faa9",
+      "verifier_unix_time": 1700000000,
+      "last_accepted_counter": null,
+      "expect": "accept"
+    },
+    {
+      "name": "legacy_prev_window",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "101234aa2a49c325130af7faa9",
+      "verifier_unix_time": 1700000030,
+      "last_accepted_counter": null,
+      "expect": "accept"
+    },
+    {
+      "name": "legacy_too_old",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "101234aa2a49c325130af7faa9",
+      "verifier_unix_time": 1700000090,
+      "last_accepted_counter": null,
+      "expect": "reject"
+    },
+    {
+      "name": "legacy_replay",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "101234aa2a49c325130af7faa9",
+      "verifier_unix_time": 1700000000,
+      "last_accepted_counter": 56666666,
+      "expect": "reject"
+    },
+    {
+      "name": "tampered_mac",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "201234fe80d0f47d2a789b0c3f",
+      "verifier_unix_time": 1700000000,
+      "last_accepted_counter": null,
+      "expect": "reject"
+    },
+    {
+      "name": "legacy_relabelled_as_v2",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "201234aa2a49c325130af7faa9",
+      "verifier_unix_time": 1700000000,
+      "last_accepted_counter": null,
+      "expect": "reject"
+    },
+    {
+      "name": "unknown_version",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "payload_hex": "301234fe80d0f47d2a789b0c3e",
+      "verifier_unix_time": 1700000000,
+      "last_accepted_counter": null,
+      "expect": "reject"
+    }
+  ],
+  "pairing": [
+    {
+      "name": "basic",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "device_id": 4660,
+      "desktop_name": "My PC",
+      "uri": "stepaway://pair?v=1&id=1234&s=AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8&n=My%20PC"
+    },
+    {
+      "name": "special_name",
+      "secret_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "device_id": 171,
+      "desktop_name": "Sandip's Laptop / Fedora",
+      "uri": "stepaway://pair?v=1&id=00ab&s=__________________________________________8&n=Sandip%27s%20Laptop%20%2F%20Fedora"
+    },
+    {
+      "name": "empty_name",
+      "secret_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+      "device_id": 1,
+      "desktop_name": "",
+      "uri": "stepaway://pair?v=1&id=0001&s=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&n="
+    }
+  ],
+  "offer": [
+    {
+      "blob_hex": "a0a1a2a3a4a5a6a7a8a9aaab0e90de59f7455b1060dc1db183c64651791ab38bdadce9c5c2946328f7fa7e00beba3281135b328c78c59d0e7f675db6452dbc",
+      "chunks_hex": [
+        "065aa0a1a2a3a4a5a6a7a8a9aa",
+        "165aab0e90de59f7455b1060dc",
+        "265a1db183c64651791ab38bda",
+        "365adce9c5c2946328f7fa7e00",
+        "465abeba3281135b328c78c59d",
+        "565a0e7f675db6452dbc000000"
+      ],
+      "code_hex": "00010203040506070809",
+      "code_text": "000G-40R4-0M30-E209",
+      "device_id": 4660,
+      "key_hex": "a06605098b4f5345eb901d4f6a1fe75d71cade68daa74fddd5f230a02fedaee9",
+      "kind": 2,
+      "name": "watch_basic",
+      "nonce_hex": "a0a1a2a3a4a5a6a7a8a9aaab",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "session": 90
+    },
+    {
+      "blob_hex": "000000000000000000000000639b734cd7f4ed9826f9ce9a0a4ce5b6bd7a784db0f9a5135f75bc2660dfacb2f370d61f94a2dd7530566366876e42157dc972",
+      "chunks_hex": [
+        "06000000000000000000000000",
+        "160000639b734cd7f4ed9826f9",
+        "2600ce9a0a4ce5b6bd7a784db0",
+        "3600f9a5135f75bc2660dfacb2",
+        "4600f370d61f94a2dd75305663",
+        "560066876e42157dc972000000"
+      ],
+      "code_hex": "ffffffffffffffffffff",
+      "code_text": "ZZZZ-ZZZZ-ZZZZ-ZZZZ",
+      "device_id": 65535,
+      "key_hex": "d14eac95b1b90aa966fe78a7eced1bb728a8896607059941ee69cbaeea3d6f8c",
+      "kind": 0,
+      "name": "all_ff",
+      "nonce_hex": "000000000000000000000000",
+      "secret_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "session": 0
+    }
+  ],
+  "offer_uuid": "c0de57e9-a4a7-4b1d-9c3e-5a11a0ca7e03"
+}

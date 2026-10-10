@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=StepAway
+Comment=Lock your computer when your phone moves away
+Exec=%h/.local/share/stepaway/app/stepaway_desktop
+Icon=preferences-system-bluetooth
+Categories=Utility;Security;
+Terminal=false

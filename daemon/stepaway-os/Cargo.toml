@@ -1,0 +1,19 @@
+[package]
+name = "stepaway-os"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+thiserror = "1"
+tokio = { version = "1", features = ["sync"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+zbus = { version = "5", default-features = false, features = ["tokio"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = ["Win32_System_Shutdown", "Win32_System_StationsAndDesktops", "Win32_Foundation"] }
+windows = { version = "0.62", features = ["Media_Control", "Foundation", "Foundation_Collections", "Win32_System_WinRT", "Devices_Bluetooth_Advertisement", "Storage_Streams"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt", "macros"] }

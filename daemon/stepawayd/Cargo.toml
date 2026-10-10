@@ -1,0 +1,22 @@
+[package]
+name = "stepawayd"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow = "1.0.104"
+getrandom = "0.4.3"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+stepaway-ble = { version = "0.0.1", path = "../stepaway-ble" }
+stepaway-core = { version = "0.0.1", path = "../stepaway-core" }
+stepaway-os = { version = "0.0.1", path = "../stepaway-os" }
+thiserror = "1"
+tokio = { version = "1.53.2", features = ["rt-multi-thread", "macros", "sync", "time", "net", "io-util", "signal"] }
+toml = "1.1.8"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_Security", "Win32_Security_Authorization", "Win32_System_Memory", "Win32_System_Services", "Win32_System_Threading", "Win32_UI_WindowsAndMessaging"] }
