@@ -143,6 +143,33 @@ Errors use JSON-RPC codes; application codes: `-32001` pairing expired, `-32002`
 `test-vectors.json` contains:
 - `vectors[]`: `secret_hex`, `device_id`, `unix_time` → `counter`, `hmac_input_hex`, `mac_hex`, `payload_hex`, `verification_code`.
 - `pairing[]`: `secret_hex`, `device_id`, `desktop_name` → `uri` (id is 4 lowercase hex digits, secret base64url without padding, name percent-encoded with only `A-Za-z0-9-._~` unescaped).
+- `remote[]`: §6 command vectors: `secret_hex`, `device_id`, `cmd`, `ts`, `nonce_hex` → `key_hex`, `mac_input_hex`, `mac_hex`.
 - `verify[]`: a payload, the verifier's clock, the last accepted counter and the expected `accept`/`reject`.
 
 Vectors were generated with a Python reference script and independently cross-checked with `openssl dgst -sha256 -mac HMAC`.
+
+## 6. Remote commands (draft, optional, off by default)
+
+A paired phone that is **not** in Bluetooth range can ask the computer to act through a relay (a server both sides can reach). The relay is **not trusted**: it only carries bytes. Everything is decided by the computer from a MAC, so a hostile or hacked relay can drop or delay commands but cannot create one.
+
+The feature is disabled until the user switches it on (config `remote_enabled`, default `false`). With it off, nothing in this section runs and the daemon makes no network connection.
+
+**Commands.** `1` = lock now. There is **no** remote unlock and none will be added: a remote command may only make the computer safer. Unknown codes are rejected after the MAC check. Commands with other side effects (sleep, shut down, close apps) may be added later only with a persisted nonce store (see below) and a confirmation on the computer.
+
+**Key.** `K = HKDF-SHA256(salt = "StepAway-remote-v1", ikm = pairing secret, info = "cmd-key", L = 32)`. It is different from the secret used for the Bluetooth token, so a captured advertisement tells nothing about it.
+
+**MAC input** (bytes): `"StepAway-remote-v1" | 0x00 | device_id (2B BE) | cmd (1B) | ts (8B BE, Unix seconds) | nonce (16B)`; `mac = HMAC-SHA256(K, input)` (32 bytes).
+
+**Verification (computer).** In this order, any failure means "do nothing":
+1. `remote_enabled` is true and the paired device exists.
+2. `device_id` equals the paired device the message is addressed to.
+3. `mac` equals the recomputed MAC (**constant time**).
+4. `|ts - now| <= 60` seconds.
+5. `cmd` is a known code.
+6. `nonce` was not seen in the last two minutes (remember it only now, after steps 1-5 passed, so forged messages cannot fill the cache).
+
+The nonce cache is in memory and bounded (256). After a daemon restart a command could be replayed for up to 60 s; harmless for `lock`, so persistence is required before any other command is added.
+
+**Wire form** (JSON, informative; the MAC is over the bytes above, not over the JSON): `{"v":1,"id":<device_id>,"c":<cmd>,"t":<ts>,"n":"<nonce, 32 hex>","m":"<mac, 64 hex>"}`.
+
+**Relay and addressing** are not part of the security model and are still being designed (planned: a per-pairing random 128-bit inbox id handed to the phone in the pairing offer; transport over HTTPS). A relay must never receive the pairing secret, the key `K` or any token. Test vectors: the `remote` section of `test-vectors.json` (Rust today; the Android app in the private repository must pass the same vectors before this ships).

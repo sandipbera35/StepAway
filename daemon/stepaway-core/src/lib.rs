@@ -5,5 +5,6 @@ pub mod distance;
 pub mod filter;
 pub mod offer;
 pub mod pairing;
+pub mod remote;
 pub mod state;
 pub mod token;

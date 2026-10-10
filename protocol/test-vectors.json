@@ -338,5 +338,30 @@
       "session": 0
     }
   ],
-  "offer_uuid": "c0de57e9-a4a7-4b1d-9c3e-5a11a0ca7e03"
+  "offer_uuid": "c0de57e9-a4a7-4b1d-9c3e-5a11a0ca7e03",
+  "remote_mac_prefix": "StepAway-remote-v1",
+  "remote": [
+    {
+      "cmd": 1,
+      "device_id": 4660,
+      "key_hex": "6722b4a47320c03bd5ee03c6476846ce52b87bc7bb174d905c4494098b52187f",
+      "mac_hex": "76a10add9cfe6de3121bd32f7bba9970a2d97f53d88ab7ad211553383b683729",
+      "mac_input_hex": "53746570417761792d72656d6f74652d763100123401000000006b49d200101112131415161718191a1b1c1d1e1f",
+      "name": "lock_basic",
+      "nonce_hex": "101112131415161718191a1b1c1d1e1f",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "ts": 1800000000
+    },
+    {
+      "cmd": 1,
+      "device_id": 1,
+      "key_hex": "6722b4a47320c03bd5ee03c6476846ce52b87bc7bb174d905c4494098b52187f",
+      "mac_hex": "51883ecfda0591740390c9392078771c47a1145c8e41ea8bc85fd438ce0772e3",
+      "mac_input_hex": "53746570417761792d72656d6f74652d763100000101000000006b49d27baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "lock_other_device",
+      "nonce_hex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "ts": 1800000123
+    }
+  ]
 }
