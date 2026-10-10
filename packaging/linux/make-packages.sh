@@ -64,7 +64,7 @@ chmod 755 "$deb/DEBIAN/prerm"
 dpkg-deb --root-owner-group --build "$deb" "$out/stepaway_${ver}_${deb_arch}.deb" >/dev/null
 
 # ---- .rpm ----
-top="$work/rpm"; mkdir -p "$top"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+top="$work/rpm"; mkdir -p "$top/BUILD" "$top/RPMS" "$top/SOURCES" "$top/SPECS" "$top/SRPMS"
 cat > "$top/SPECS/stepaway.spec" <<SPEC
 Name: stepaway
 Version: $ver
