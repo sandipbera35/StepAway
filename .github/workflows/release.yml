@@ -19,7 +19,7 @@ jobs:
         if: runner.arch == 'X64'
         with:
           channel: stable
-      - name: Flutter (arm64: the action has no Linux arm64 build)
+      - name: Flutter on arm64 (the action has no arm64 build)
         if: runner.arch == 'ARM64'
         run: |
           git clone --depth 1 -b stable https://github.com/flutter/flutter.git "$HOME/flutter"
