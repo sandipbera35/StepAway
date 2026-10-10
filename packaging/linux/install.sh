@@ -8,7 +8,8 @@ here=$(cd "$(dirname "$0")" && pwd)
 if [ -d "$here/bundle" ]; then
   bundle="$here/bundle"
 else
-  bundle="$here/../../desktop/build/linux/x64/release/bundle"
+  case $(uname -m) in aarch64|arm64) arch=arm64 ;; *) arch=x64 ;; esac
+  bundle="$here/../../desktop/build/linux/$arch/release/bundle"
 fi
 [ -x "$bundle/stepaway_desktop" ] || { echo "no app bundle found; run build-release.sh first" >&2; exit 1; }
 [ -x "$bundle/stepawayd" ] || { echo "the bundle does not contain stepawayd; rebuild with the daemon built first" >&2; exit 1; }

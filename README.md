@@ -20,7 +20,9 @@ Automatically lock your Linux or Windows computer when your paired Android phone
 
 ## Install
 Download from the [Releases](../../releases) page:
-- **Linux:** `stepaway-linux-x64.tar.gz`, extract and run `./install.sh`.
+- **Debian / Ubuntu:** `sudo apt install ./stepaway_<version>_amd64.deb` (or `arm64`).
+- **Fedora / RHEL / openSUSE:** `sudo dnf install ./stepaway-<version>-1.x86_64.rpm` (or `aarch64`).
+- **Any Linux:** `stepaway-linux-x64.tar.gz` or `stepaway-linux-arm64.tar.gz`, extract and run `./install.sh` (no root needed).
 - **Android:** `stepaway-android.apk` (allow installing from unknown sources). Release builds are currently debug-signed.
 
 Verify downloads with the `.sha256` files.
@@ -32,7 +34,7 @@ cd desktop && flutter run -d linux       # desktop app
 cd mobile && flutter run                 # Android app
 packaging/linux/build-release.sh         # Linux release archive
 ```
-Publishing a release: push a tag such as `v0.1.0`; the *Release* workflow builds both artifacts and attaches them.
+Publishing a release: push a tag such as `v0.1.0`; the *Release* workflow builds the Linux packages (x86-64 and arm64) and the Android APK and attaches them.
 
 ## Limits
 Bluetooth signal strength is only a rough distance estimate; calibrate once. StepAway cannot tell if someone else holds your phone. See `SECURITY.md`.

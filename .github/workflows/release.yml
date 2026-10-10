@@ -7,7 +7,10 @@ permissions:
   contents: write
 jobs:
   linux:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -16,15 +19,18 @@ jobs:
           channel: stable
       - run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libdbus-1-dev
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libdbus-1-dev rpm
       - run: flutter config --enable-linux-desktop
       - run: packaging/linux/build-release.sh
+      - run: packaging/linux/make-packages.sh "${GITHUB_REF_NAME}"
       - uses: actions/upload-artifact@v4
         with:
-          name: linux
+          name: linux-${{ matrix.os }}
           path: |
-            dist/stepaway-linux-x64.tar.gz
-            dist/stepaway-linux-x64.tar.gz.sha256
+            dist/stepaway-linux-*.tar.gz*
+            dist/*.deb
+            dist/*.rpm
+            dist/packages-*.sha256
   android:
     runs-on: ubuntu-latest
     steps:
