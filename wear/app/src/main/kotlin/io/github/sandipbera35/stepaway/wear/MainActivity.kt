@@ -107,7 +107,7 @@ fun WearApp(state: WearState) {
                     state,
                     onToggle = { on ->
                         if (on) askPermissions.launch(neededPermissions())
-                        state.setProtection(on)
+                        state.toggleProtection(on)
                     },
                     onPair = {
                         askPermissions.launch(neededPermissions())

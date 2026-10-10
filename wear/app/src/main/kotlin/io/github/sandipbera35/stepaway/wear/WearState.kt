@@ -34,7 +34,7 @@ class WearState(context: Context) {
         problem = AdvertiseService.state.error ?: offer.error
     }
 
-    fun setProtection(on: Boolean) {
+    fun toggleProtection(on: Boolean) {
         store.protectionEnabled = on
         if (on && store.list().isNotEmpty()) AdvertiseService.start(app) else AdvertiseService.stop(app)
         refresh()

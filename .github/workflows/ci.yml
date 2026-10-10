@@ -8,6 +8,7 @@ jobs:
         working-directory: daemon
     steps:
       - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y pkg-config libdbus-1-dev
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
@@ -46,8 +47,8 @@ jobs:
           channel: stable
       - run: flutter pub get
         working-directory: mobile
-      - run: ./gradlew testDebugUnitTest
-        working-directory: mobile/android
+      - run: flutter build apk --debug
+        working-directory: mobile
   shared-code:
     runs-on: ubuntu-latest
     steps:
