@@ -6,6 +6,7 @@
 - Protocol changes must update `protocol/SPEC.md`, `protocol/test-vectors.json` and tests in every language.
 - Rust: `cargo fmt --all`, `cargo clippy --all-targets -- -D warnings`, `cargo test --workspace`. Flutter: `flutter analyze`, `flutter test`.
 - Use Conventional Commits (`feat:`, `fix:`, `docs:`, ...). Contributions are accepted under GPL-3.0-or-later.
+- The Android app is not developed in this repository (it is proprietary and private). Changes to `ui/` and `protocol/` are used by it too, so by contributing you agree the copyright holder may also use your change in that app under other terms; open an issue first if you are not comfortable with that.
 
 ## Sign-off (Developer Certificate of Origin)
 Every commit must carry a `Signed-off-by: Your Name <email>` line (`git commit -s`). It states that

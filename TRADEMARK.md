@@ -1,6 +1,6 @@
 # StepAway name and logo policy
 
-The **source code** of StepAway is free software under the GPL-3.0-or-later (see `LICENSE`):
+The **source code in this repository** is free software under the GPL-3.0-or-later (see `LICENSE`):
 anyone may use it, study it, change it and contribute to it. The GPL also lets others
 redistribute it under the same license.
 

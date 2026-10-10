@@ -14,7 +14,6 @@ EOF2
 read_versions() {
   ui=$(sed -n 's/^version: *\([0-9.]*\).*/\1/p' ui/pubspec.yaml)
   desktop=$(sed -n 's/^version: *\(.*\)/\1/p' desktop/pubspec.yaml)
-  mobile=$(sed -n 's/^version: *\(.*\)/\1/p' mobile/pubspec.yaml)
   cargo=$(sed -n '/^\[workspace.package\]/,/^\[/{s/^version = "\(.*\)"/\1/p}' daemon/Cargo.toml)
   wear=$(sed -n 's/.*versionName = "\(.*\)"/\1/p' wear/app/build.gradle.kts)
   wearcode=$(sed -n 's/.*versionCode = \([0-9]*\)/\1/p' wear/app/build.gradle.kts)
@@ -28,7 +27,7 @@ case "${1:-}" in
     case $v in [0-9]*.[0-9]*.[0-9]*) ;; *) echo "version must look like 1.2.3" >&2; exit 2 ;; esac
     n=$(build_of "$v")
     sed -i "s/^version: .*/version: $v/" ui/pubspec.yaml
-    sed -i "s/^version: .*/version: $v+$n/" desktop/pubspec.yaml mobile/pubspec.yaml
+    sed -i "s/^version: .*/version: $v+$n/" desktop/pubspec.yaml
     sed -i "/^\[workspace.package\]/,/^\[/s/^version = \".*\"/version = \"$v\"/" daemon/Cargo.toml
     sed -i "s/versionName = \".*\"/versionName = \"$v\"/; s/versionCode = [0-9]*/versionCode = $n/" wear/app/build.gradle.kts
     sed -i "s/^const kAppVersion = '.*';/const kAppVersion = '$v';/; s/^const kBuildNumber = [0-9]*;/const kBuildNumber = $n;/" ui/lib/src/legal.dart
@@ -44,7 +43,6 @@ case "${1:-}" in
     chk() { if [ "$2" != "$3" ]; then echo "MISMATCH $1: found '$2', expected '$3'" >&2; bad=1; fi; }
     chk "ui/pubspec.yaml" "$ui" "$want"
     chk "desktop/pubspec.yaml" "$desktop" "$want+$n"
-    chk "mobile/pubspec.yaml" "$mobile" "$want+$n"
     chk "daemon/Cargo.toml" "$cargo" "$want"
     chk "wear versionName" "$wear" "$want"
     chk "wear versionCode" "$wearcode" "$n"

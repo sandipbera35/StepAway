@@ -66,8 +66,8 @@ const privacySummary =
 
 const privacySections = <LegalSection>[
   LegalSection('Who is responsible', [
-    'StepAway is free and open-source software published by sandipbera35 (an individual) and '
-        'contributors. Because the developer never receives any of your data, the developer '
+    'StepAway is published by sandipbera35 (an individual). The desktop app and service are '
+        'free and open-source software; the Android app is a paid, closed-source app. Because the developer never receives any of your data, the developer '
         'does not act as a processor or controller of your personal data. Questions can be '
         'asked in the issue tracker: $kIssuesUrl',
   ]),
@@ -235,7 +235,20 @@ class AboutContent extends StatelessWidget {
     required this.onShowPrivacy,
     required this.onShowLicenses,
     this.details = const [],
+    this.licenseName = kLicenseName,
+    this.warrantyNotice = kWarrantyNotice,
+    this.trademarkNotice = kTrademarkNotice,
+    this.licenseUrl = kLicenseUrl,
+    this.sourceUrl = kHomepageUrl,
   });
+
+  /// The license block defaults to the GPL text. An app distributed under other terms passes its
+  /// own; a null [licenseUrl], [trademarkNotice] or [sourceUrl] hides that part.
+  final String licenseName;
+  final String warrantyNotice;
+  final String? trademarkNotice;
+  final String? licenseUrl;
+  final String? sourceUrl;
 
   /// Extra "label, value" rows for the version card (build number, service version, ...).
   final List<(String, String)> details;
@@ -310,12 +323,13 @@ class AboutContent extends StatelessWidget {
                   label: 'Open-source licenses',
                   onTap: onShowLicenses,
                 ),
-                _LinkRow(
-                  icon: Icons.code_rounded,
-                  label: 'Source code',
-                  subtitle: kHomepageUrl,
-                  onTap: () => onOpenLink(kHomepageUrl),
-                ),
+                if (sourceUrl != null)
+                  _LinkRow(
+                    icon: Icons.code_rounded,
+                    label: 'Source code',
+                    subtitle: sourceUrl,
+                    onTap: () => onOpenLink(sourceUrl!),
+                  ),
                 _LinkRow(
                   icon: Icons.bug_report_outlined,
                   label: 'Report a problem',
@@ -339,23 +353,27 @@ class AboutContent extends StatelessWidget {
               children: [
                 Text('License', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
-                Text(kLicenseName),
+                Text(licenseName),
                 const SizedBox(height: 6),
                 Text(kCopyright, style: theme.textTheme.bodySmall),
                 const SizedBox(height: 12),
-                Text(kWarrantyNotice, style: theme.textTheme.bodySmall),
-                const SizedBox(height: 8),
-                Text(kTrademarkNotice, style: theme.textTheme.bodySmall),
+                Text(warrantyNotice, style: theme.textTheme.bodySmall),
+                if (trademarkNotice != null) ...[
+                  const SizedBox(height: 8),
+                  Text(trademarkNotice!, style: theme.textTheme.bodySmall),
+                ],
                 Wrap(
                   children: [
-                    TextButton(
-                      onPressed: () => onOpenLink(kLicenseUrl),
-                      child: const Text('Read the full license'),
-                    ),
-                    TextButton(
-                      onPressed: () => onOpenLink(kTrademarkUrl),
-                      child: const Text('Name and logo policy'),
-                    ),
+                    if (licenseUrl != null)
+                      TextButton(
+                        onPressed: () => onOpenLink(licenseUrl!),
+                        child: const Text('Read the full license'),
+                      ),
+                    if (trademarkNotice != null)
+                      TextButton(
+                        onPressed: () => onOpenLink(kTrademarkUrl),
+                        child: const Text('Name and logo policy'),
+                      ),
                   ],
                 ),
               ],

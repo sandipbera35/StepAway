@@ -6,7 +6,7 @@ _Last updated: 10 October 2026_
 
 ## 1. Who is responsible
 
-StepAway is free and open-source software published by sandipbera35 (an individual) and contributors. Because the developer never receives any of your data, the developer does not act as a processor or controller of your personal data. Questions can be asked in the issue tracker: https://github.com/sandipbera35/StepAway/issues
+StepAway is published by sandipbera35 (an individual). The desktop app and service are free and open-source software; the Android app is a paid, closed-source app. Because the developer never receives any of your data, the developer does not act as a processor or controller of your personal data. Questions can be asked in the issue tracker: https://github.com/sandipbera35/StepAway/issues
 
 ## 2. What StepAway stores on your computer
 

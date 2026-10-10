@@ -15,7 +15,6 @@ String _pubspecVersion(String path) {
 void main() {
   test('the version shown in the apps matches every pubspec', () {
     expect(_pubspecVersion('../desktop/pubspec.yaml'), kAppVersion);
-    expect(_pubspecVersion('../mobile/pubspec.yaml'), kAppVersion);
   });
 
   test(
@@ -23,7 +22,7 @@ void main() {
     () {
       final p = kAppVersion.split('.').map(int.parse).toList();
       expect(kBuildNumber, p[0] * 10000 + p[1] * 100 + p[2]);
-      for (final f in ['../desktop/pubspec.yaml', '../mobile/pubspec.yaml']) {
+      for (final f in ['../desktop/pubspec.yaml']) {
         expect(
           RegExp(
             r'^version:\s*[0-9.]+\+(\d+)',
@@ -67,6 +66,38 @@ void main() {
       expect(md, contains(s.title));
     }
     expect(md, contains(kPrivacyUpdated));
+  });
+
+  testWidgets('About can show other license terms and hide the source link', (
+    t,
+  ) async {
+    await t.binding.setSurfaceSize(const Size(800, 1400));
+    await t.pumpWidget(
+      MaterialApp(
+        theme: StepAwayTheme.light(),
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: AboutContent(
+              onOpenLink: (_) async {},
+              onShowPrivacy: () {},
+              onShowLicenses: () {},
+              licenseName: 'Proprietary',
+              warrantyNotice: 'All rights reserved.',
+              trademarkNotice: null,
+              licenseUrl: null,
+              sourceUrl: null,
+            ),
+          ),
+        ),
+      ),
+    );
+    await t.pumpAndSettle();
+    expect(find.text('Proprietary'), findsOneWidget);
+    expect(find.text('All rights reserved.'), findsOneWidget);
+    expect(find.textContaining('WITHOUT ANY WARRANTY'), findsNothing);
+    expect(find.text('Source code'), findsNothing);
+    expect(find.text('Read the full license'), findsNothing);
+    expect(find.text('Name and logo policy'), findsNothing);
   });
 
   testWidgets('About shows version, license and the links', (t) async {
