@@ -5,6 +5,7 @@ export 'src/colors.dart';
 export 'src/distance_widgets.dart';
 export 'src/glass.dart';
 export 'src/layout.dart';
+export 'src/legal.dart';
 export 'src/logo.dart';
 export 'src/motion.dart';
 export 'src/scroll.dart';

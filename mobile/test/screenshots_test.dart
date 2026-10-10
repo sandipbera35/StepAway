@@ -40,6 +40,9 @@ class _Fake implements Native {
   Future<String?> scanQr() async => null;
   @override
   Future<void> batterySettings() async {}
+
+  @override
+  Future<bool> openUrl(String url) async => false;
   @override
   Stream<BeaconSample> beaconEvents() => _beacon.stream;
   @override

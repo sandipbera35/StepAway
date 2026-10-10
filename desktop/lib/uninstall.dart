@@ -327,8 +327,23 @@ class WindowsUninstaller implements Uninstaller {
   }
 }
 
-/// The uninstaller for the platform this app runs on, or null where there is none.
+/// True inside a Flatpak or Snap sandbox, where the app cannot (and must not) remove itself:
+/// the store or package manager does that.
+bool isSandboxed({
+  Map<String, String>? env,
+  bool Function(String)? fileExists,
+}) {
+  final e = env ?? Platform.environment;
+  final exists = fileExists ?? (String p) => File(p).existsSync();
+  return e.containsKey('FLATPAK_ID') ||
+      e.containsKey('SNAP') ||
+      exists('/.flatpak-info');
+}
+
+/// The uninstaller for the platform this app runs on, or null where there is none (macOS, or
+/// inside a Flatpak/Snap sandbox where the app store handles removal).
 Uninstaller? createUninstaller() {
+  if (isSandboxed()) return null;
   if (Platform.isLinux) return LinuxUninstaller();
   if (Platform.isWindows) return WindowsUninstaller();
   return null;

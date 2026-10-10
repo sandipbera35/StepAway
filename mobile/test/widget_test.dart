@@ -57,6 +57,9 @@ class FakeNative implements Native {
   Future<String?> scanQr() async => null;
   @override
   Future<void> batterySettings() async {}
+
+  @override
+  Future<bool> openUrl(String url) async => false;
   @override
   Stream<BeaconSample> beaconEvents() => _beacon.stream;
   @override
@@ -113,6 +116,29 @@ void main() {
             .onChanged,
         isNull,
       );
+    },
+  );
+
+  testWidgets(
+    'settings has the version, an About page and the privacy policy',
+    (t) async {
+      await pumpApp(t, FakeNative());
+      await t.tap(find.byKey(const Key('nav-settings')));
+      await t.pumpAndSettle();
+      expect(find.text('Version $kAppVersion'), findsOneWidget);
+      await t.tap(find.byKey(const Key('open-privacy')));
+      await t.pumpAndSettle();
+      expect(find.byKey(const Key('privacy-summary')), findsOneWidget);
+      expect(
+        find.textContaining('does not request the Internet'),
+        findsOneWidget,
+      );
+      await t.pageBack();
+      await t.pumpAndSettle();
+      await t.tap(find.byKey(const Key('open-about')));
+      await t.pumpAndSettle();
+      expect(find.byKey(const Key('about-version')), findsOneWidget);
+      expect(find.textContaining('WITHOUT ANY WARRANTY'), findsOneWidget);
     },
   );
 

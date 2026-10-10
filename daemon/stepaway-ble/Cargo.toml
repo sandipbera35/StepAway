@@ -7,7 +7,7 @@ license.workspace = true
 [dependencies]
 btleplug = "0.13.4"
 futures = "0.3.34"
-stepaway-core = { version = "0.0.1", path = "../stepaway-core" }
+stepaway-core = { path = "../stepaway-core" }
 thiserror = "2.0.21"
 tokio = { version = "1.53.2", features = ["rt", "macros", "sync", "time"] }
 tracing = "0.1.44"

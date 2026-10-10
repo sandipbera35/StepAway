@@ -79,7 +79,7 @@ class S {
   static const about = 'About';
   static const aboutBody =
       'StepAway is free and open source (GPL-3.0). Everything stays on your devices: no accounts, no servers, no tracking.';
-  static const version = 'Version 0.0.1';
+  static const privacyPolicy = 'Privacy policy';
   static const skip = 'Skip';
   static const next = 'Next';
   static const getStarted = 'Get started';

@@ -4,6 +4,7 @@ import 'package:stepaway_ui/stepaway_ui.dart';
 import '../controller.dart';
 import '../strings.dart';
 import '../widgets.dart';
+import 'about.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key, required this.app, required this.theme});
@@ -188,7 +189,41 @@ class SettingsPage extends StatelessWidget {
           _card(context, 4, S.about, [
             const Text(S.aboutBody),
             const SizedBox(height: 10),
-            Text(S.version, style: Theme.of(context).textTheme.bodySmall),
+            Text(
+              'Version $kAppVersion',
+              key: const Key('settings-version'),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    key: const Key('open-about'),
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => AboutPage(native: app.native),
+                      ),
+                    ),
+                    icon: const Icon(Icons.info_outline_rounded),
+                    label: const Text(S.about),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    key: const Key('open-privacy'),
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => PrivacyPage(native: app.native),
+                      ),
+                    ),
+                    icon: const Icon(Icons.privacy_tip_outlined),
+                    label: const Text(S.privacyPolicy),
+                  ),
+                ),
+              ],
+            ),
           ]),
         ],
       ),

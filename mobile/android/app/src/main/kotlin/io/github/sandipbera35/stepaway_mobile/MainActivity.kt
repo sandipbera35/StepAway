@@ -183,6 +183,16 @@ class MainActivity : FlutterFragmentActivity() {
                 startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
                 result.success(true)
             }
+            "openUrl" -> {
+                val url = call.arguments as? String
+                val ok = url != null && url.startsWith("https://") && try {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    true
+                } catch (e: android.content.ActivityNotFoundException) {
+                    false
+                }
+                result.success(ok)
+            }
             "openAppSettings" -> {
                 startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
                 result.success(true)

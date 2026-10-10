@@ -1,8 +1,11 @@
 [Desktop Entry]
 Type=Application
 Name=StepAway
+GenericName=Proximity lock
 Comment=Lock your computer when your phone moves away
-Exec=%h/.local/share/stepaway/app/stepaway_desktop
-Icon=preferences-system-bluetooth
+Exec=stepaway
+Icon=io.github.sandipbera35.StepAway
+StartupWMClass=io.github.sandipbera35.stepaway_desktop
 Categories=Utility;Security;
+Keywords=lock;bluetooth;proximity;phone;
 Terminal=false

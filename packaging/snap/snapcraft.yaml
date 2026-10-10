@@ -1,0 +1,62 @@
+# Snap packaging for StepAway.
+#
+# STATUS: draft, not built. Locking the screen goes through systemd-logind and Bluetooth through
+# BlueZ; a strict snap needs the `bluez` and `login-session-control` interfaces. The second one
+# is privileged and has to be requested from the Snap Store reviewers (forum.snapcraft.io,
+# "request for interface connection"); if they refuse, the fallback is `confinement: classic`,
+# which also needs a manual approval.
+name: stepaway
+title: StepAway
+base: core24
+adopt-info: stepaway
+summary: Lock your computer when your phone moves away
+description: |
+  StepAway locks this computer when your paired Android phone or watch moves out of range, and
+  can optionally unlock it when you come back. Everything stays on your devices: there are no
+  accounts, no network access and no telemetry.
+license: GPL-3.0-or-later
+website: https://github.com/sandipbera35/StepAway
+source-code: https://github.com/sandipbera35/StepAway
+issues: https://github.com/sandipbera35/StepAway/issues
+contact: https://github.com/sandipbera35/StepAway/issues
+grade: stable
+confinement: strict
+architectures:
+  - build-on: [amd64]
+  - build-on: [arm64]
+
+apps:
+  stepaway:
+    command: bin/stepaway_desktop
+    extensions: [gnome]
+    desktop: share/applications/io.github.sandipbera35.StepAway.desktop
+    plugs:
+      - bluez
+      - login-session-control
+      - desktop
+      - wayland
+      - x11
+      - opengl
+      - mpris
+    # no `network` plug: the app never uses the network
+
+slots:
+  mpris:
+    interface: mpris
+    name: stepaway
+
+parts:
+  stepaway:
+    plugin: dump
+    # Built beforehand with packaging/linux/build-release.sh and unpacked here.
+    source: dist/stepaway-linux-x64.tar.gz
+    source-type: tar
+    organize:
+      bundle: bin-bundle
+    override-prime: |
+      craftctl default
+      install -Dm644 $CRAFT_PROJECT_DIR/packaging/linux/io.github.sandipbera35.StepAway.desktop $CRAFT_PRIME/share/applications/io.github.sandipbera35.StepAway.desktop
+      sed -i 's|^Icon=.*|Icon=${SNAP}/meta/gui/icon.svg|' $CRAFT_PRIME/share/applications/io.github.sandipbera35.StepAway.desktop
+      install -Dm644 $CRAFT_PROJECT_DIR/packaging/linux/io.github.sandipbera35.StepAway.svg $CRAFT_PRIME/meta/gui/icon.svg
+      install -Dm644 $CRAFT_PROJECT_DIR/packaging/linux/io.github.sandipbera35.StepAway.metainfo.xml $CRAFT_PRIME/meta/gui/io.github.sandipbera35.StepAway.metainfo.xml
+      craftctl set version=$(sed -n 's/^version: *\([0-9.]*\).*/\1/p' $CRAFT_PROJECT_DIR/desktop/pubspec.yaml)

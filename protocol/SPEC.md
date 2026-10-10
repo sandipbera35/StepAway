@@ -95,7 +95,7 @@ Methods:
 
 | Method | Params | Result |
 |---|---|---|
-| `status` | – | `{protocol: 1, state, paused, scanning, unlock_enabled, devices_present: [device_id], capabilities: {media, services}}` |
+| `status` | – | `{protocol: 1, version: "x.y.z" (daemon release, informational), state, paused, scanning, unlock_enabled, devices_present: [device_id], capabilities: {media, services}}` |
 | `listDevices` | – | `[{device_id, name, kind, paired_at, last_seen, presence_only, address, calibrated}]` (never the secret) |
 | `startPairing` | `{name?, kind?}` (`kind`: `phone`, `tablet`, `watch`, `other`; default `phone`) | `{qr_uri, verification_code, expires_at}` |
 | `confirmPairing` | `{device_id}` | `{ok}` |

@@ -10,6 +10,7 @@ import 'strings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  registerExtraLicenses({'ZXing (QR scanning)': 'assets/android_licenses.txt'});
   final native = MethodChannelNative();
   final theme = ThemeController(store: NativeThemeStore(native));
   await theme.init();

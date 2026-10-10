@@ -6,7 +6,14 @@ on:
 permissions:
   contents: write
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: The tag must match the version in every component
+        run: tools/version.sh check "${GITHUB_REF_NAME}"
   linux:
+    needs: check
     strategy:
       fail-fast: false
       matrix:
@@ -39,6 +46,7 @@ jobs:
             dist/*.rpm
             dist/packages-*.sha256
   android:
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -49,16 +57,38 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-      - run: flutter pub get && flutter build apk --release
+      # Optional release signing: add these repository secrets (see packaging/android/PLAY_STORE.md).
+      # Without them the build is signed with the debug key and is not accepted by Google Play.
+      - name: Release signing key
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > mobile/android/upload.jks
+            printf 'storeFile=upload.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+              "$STORE_PASSWORD" "$KEY_ALIAS" "$KEY_PASSWORD" > mobile/android/key.properties
+            echo "SIGNED=release" >> "$GITHUB_ENV"
+          else
+            echo "::warning::No signing key configured: the APK/AAB use the debug key"
+            echo "SIGNED=debug" >> "$GITHUB_ENV"
+          fi
+      - run: flutter pub get && flutter build apk --release && flutter build appbundle --release
         working-directory: mobile
       - run: |
           mkdir -p dist
           cp mobile/build/app/outputs/flutter-apk/app-release.apk dist/stepaway-android.apk
-          (cd dist && sha256sum stepaway-android.apk > stepaway-android.apk.sha256)
+          cp mobile/build/app/outputs/bundle/release/app-release.aab dist/stepaway-android.aab
+          (cd dist && sha256sum stepaway-android.apk stepaway-android.aab > stepaway-android.sha256)
       - uses: actions/upload-artifact@v4
         with:
           name: android
-          path: dist/stepaway-android.apk*
+          path: |
+            dist/stepaway-android.apk
+            dist/stepaway-android.aab
+            dist/stepaway-android.sha256
   publish:
     needs: [linux, android]
     runs-on: ubuntu-latest

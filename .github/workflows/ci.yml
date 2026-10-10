@@ -49,6 +49,11 @@ jobs:
         working-directory: mobile
       - run: flutter build apk --debug
         working-directory: mobile
+  versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: tools/version.sh check
   shared-code:
     runs-on: ubuntu-latest
     steps:

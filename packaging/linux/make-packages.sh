@@ -22,21 +22,16 @@ work=$(mktemp -d); trap 'rm -rf "$work"' EXIT
 tree="$work/tree"
 install -d "$tree/opt" "$tree/usr/bin" "$tree/usr/share/applications" "$tree/usr/share/icons/hicolor/scalable/apps" "$tree/usr/share/doc/stepaway" "$tree/usr/share/metainfo"
 cp -r "$bundle" "$tree/opt/stepaway"
-ln -s /opt/stepaway/stepaway_desktop "$tree/usr/bin/stepaway"
+ln -s ../../opt/stepaway/stepaway_desktop "$tree/usr/bin/stepaway"
 install -m 644 "$here/$id.svg" "$tree/usr/share/icons/hicolor/scalable/apps/$id.svg"
 sed "s/VERSION/$ver/" "$here/$id.metainfo.xml" > "$tree/usr/share/metainfo/$id.metainfo.xml"
-install -m 644 "$root/LICENSE" "$tree/usr/share/doc/stepaway/copyright"
-cat > "$tree/usr/share/applications/$id.desktop" <<DESKTOP
-[Desktop Entry]
-Type=Application
-Name=StepAway
-Comment=Lock your computer when your phone moves away
-Exec=/opt/stepaway/stepaway_desktop
-Icon=$id
-StartupWMClass=io.github.sandipbera35.stepaway_desktop
-Categories=Utility;Security;
-Terminal=false
-DESKTOP
+doc="$tree/usr/share/doc/stepaway"
+install -m 644 "$here/debian-copyright" "$doc/copyright"
+install -m 644 "$root/LICENSE" "$doc/LICENSE"
+install -m 644 "$root/PRIVACY.md" "$doc/PRIVACY.md"
+install -m 644 "$root/THIRD_PARTY_LICENSES.txt" "$doc/THIRD_PARTY_LICENSES.txt"
+printf 'stepaway (%s) unstable; urgency=low\n\n  * Release %s. See https://github.com/sandipbera35/StepAway/releases\n\n -- sandipbera35 <sandipbera35@users.noreply.github.com>  %s\n' "$ver" "$ver" "$(date -R)" | gzip -9n > "$doc/changelog.gz"
+install -m 644 "$here/$id.desktop" "$tree/usr/share/applications/$id.desktop"
 chmod -R u+rwX,go+rX-w "$tree"
 
 # ---- .deb ----
@@ -50,7 +45,7 @@ Priority: optional
 Architecture: $deb_arch
 Depends: libgtk-3-0, libdbus-1-3, bluez
 Installed-Size: $size
-Maintainer: sandipbera35 <sandipbera35@gmail.com>
+Maintainer: sandipbera35 <sandipbera35@users.noreply.github.com>
 Homepage: https://github.com/sandipbera35/StepAway
 Description: Lock your computer when your phone moves away
  StepAway locks (and optionally unlocks) this computer based on the Bluetooth
@@ -91,7 +86,14 @@ pkill -x stepawayd 2>/dev/null || :
 /usr/share/applications/$id.desktop
 /usr/share/metainfo/$id.metainfo.xml
 /usr/share/icons/hicolor/scalable/apps/$id.svg
-%license /usr/share/doc/stepaway/copyright
+%license /usr/share/doc/stepaway/LICENSE
+%license /usr/share/doc/stepaway/THIRD_PARTY_LICENSES.txt
+%doc /usr/share/doc/stepaway/PRIVACY.md
+/usr/share/doc/stepaway/copyright
+/usr/share/doc/stepaway/changelog.gz
+%changelog
+* $(date '+%a %b %d %Y') sandipbera35 <sandipbera35@users.noreply.github.com> - $ver-1
+- Release $ver. See https://github.com/sandipbera35/StepAway/releases
 SPEC
 rpmbuild -bb --define "_topdir $top" --define "_build_id_links none" "$top/SPECS/stepaway.spec" >/dev/null
 cp "$top"/RPMS/$rpm_arch/*.rpm "$out/"

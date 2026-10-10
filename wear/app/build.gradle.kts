@@ -11,8 +11,8 @@ android {
         applicationId = "io.github.sandipbera35.stepaway.wear"
         minSdk = 30
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.0.1"
+        versionCode = 102
+        versionName = "0.1.2"
     }
 
     buildFeatures {

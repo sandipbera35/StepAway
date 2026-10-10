@@ -1,0 +1,58 @@
+# Flatpak manifest for StepAway.
+#
+# STATUS: installs the prebuilt release archive from GitHub. Flathub requires applications to be
+# built from source, so before submitting to Flathub this must be converted to build the Rust
+# daemon (flatpak-cargo-generator) and the Flutter app (flatpak-flutter) from the tagged source.
+# Everything else here (permissions, metadata, desktop file) is meant to be final.
+#
+# Local test:  flatpak-builder --user --install --force-clean build-dir \
+#                packaging/flatpak/io.github.sandipbera35.StepAway.yml
+app-id: io.github.sandipbera35.StepAway
+runtime: org.gnome.Platform
+runtime-version: '50'
+sdk: org.gnome.Sdk
+command: stepaway
+finish-args:
+  # Window
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  # No network on purpose: StepAway never connects to the internet.
+  # Bluetooth scanning (BlueZ) and locking/unlocking the session (logind), both on the system bus.
+  - --system-talk-name=org.bluez
+  - --system-talk-name=org.freedesktop.login1
+  # Pause/resume media players through MPRIS.
+  - --talk-name=org.mpris.MediaPlayer2.*
+  # Start the background service at login.
+  - --filesystem=xdg-config/autostart:create
+modules:
+  - name: stepaway
+    buildsystem: simple
+    build-commands:
+      - install -d /app/lib/stepaway
+      - cp -r bundle/. /app/lib/stepaway/
+      - install -d /app/bin
+      - ln -sf ../lib/stepaway/stepaway_desktop /app/bin/stepaway
+      - install -Dm644 io.github.sandipbera35.StepAway.svg /app/share/icons/hicolor/scalable/apps/io.github.sandipbera35.StepAway.svg
+      - install -Dm644 io.github.sandipbera35.StepAway.desktop /app/share/applications/io.github.sandipbera35.StepAway.desktop
+      - install -Dm644 io.github.sandipbera35.StepAway.metainfo.xml /app/share/metainfo/io.github.sandipbera35.StepAway.metainfo.xml
+      - install -Dm644 LICENSE /app/share/licenses/io.github.sandipbera35.StepAway/LICENSE
+      - install -Dm644 THIRD_PARTY_LICENSES.txt /app/share/licenses/io.github.sandipbera35.StepAway/THIRD_PARTY_LICENSES.txt
+    sources:
+      - type: archive
+        # Replace with the release URL and its sha256 (from the .sha256 file) when publishing:
+        url: https://github.com/sandipbera35/StepAway/releases/download/v0.1.2/stepaway-linux-x64.tar.gz
+        sha256: 0000000000000000000000000000000000000000000000000000000000000000
+        strip-components: 1
+        dest-filename: stepaway.tar.gz
+      - type: file
+        path: ../linux/io.github.sandipbera35.StepAway.svg
+      - type: file
+        path: ../linux/io.github.sandipbera35.StepAway.desktop
+      - type: file
+        path: ../linux/io.github.sandipbera35.StepAway.metainfo.xml
+      - type: file
+        path: ../../LICENSE
+      - type: file
+        path: ../../THIRD_PARTY_LICENSES.txt

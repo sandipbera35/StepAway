@@ -188,6 +188,13 @@ class S {
   static const codeBad =
       'That code does not look right. It has 16 letters and digits.';
 
+  static const about = 'About';
+  static const aboutSubtitle = 'Version, license and privacy';
+  static const privacyPolicy = 'Privacy policy';
+  static const serviceVersion = 'Background service';
+  static const serviceOlder = 'Older version (restart StepAway)';
+  static const serviceNotRunning = 'Not running';
+
   // ---- uninstall ----
   static const uninstallSection = 'Uninstall';
   static const uninstallSubtitle =

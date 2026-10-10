@@ -1,7 +1,7 @@
 name: stepaway_ui
 description: Shared look and feel (themes, glass widgets) for the StepAway apps.
 publish_to: none
-version: 0.0.1
+version: 0.1.2
 
 environment:
   sdk: ^3.8.0
@@ -16,6 +16,8 @@ dev_dependencies:
   flutter_lints: ^6.0.0
 
 flutter:
+  assets:
+    - assets/fonts/OFL.txt
   fonts:
     - family: Inter
       fonts:

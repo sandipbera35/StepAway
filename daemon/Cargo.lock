@@ -1098,7 +1098,7 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
 name = "stepaway-ble"
-version = "0.0.1"
+version = "0.1.2"
 dependencies = [
  "btleplug",
  "futures",
@@ -1111,7 +1111,7 @@ dependencies = [
 
 [[package]]
 name = "stepaway-core"
-version = "0.0.1"
+version = "0.1.2"
 dependencies = [
  "aes-gcm",
  "hex",
@@ -1126,11 +1126,11 @@ dependencies = [
 
 [[package]]
 name = "stepaway-ipc"
-version = "0.0.1"
+version = "0.1.2"
 
 [[package]]
 name = "stepaway-os"
-version = "0.0.1"
+version = "0.1.2"
 dependencies = [
  "thiserror 1.0.69",
  "tokio",
@@ -1141,7 +1141,7 @@ dependencies = [
 
 [[package]]
 name = "stepawayd"
-version = "0.0.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "getrandom 0.4.3",

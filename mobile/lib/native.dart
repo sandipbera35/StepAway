@@ -88,6 +88,9 @@ abstract class Native {
   Future<void> requestPermissions();
   Future<String?> scanQr();
   Future<void> batterySettings();
+
+  /// Opens a web link in the browser; false when nothing could open it.
+  Future<bool> openUrl(String url);
   void onDeepLink(void Function(String uri) handler);
   Stream<BeaconSample> beaconEvents();
   Future<void> requestScanPermission();
@@ -135,6 +138,10 @@ class MethodChannelNative implements Native {
 
   @override
   Future<void> batterySettings() => _ch.invokeMethod('batterySettings');
+
+  @override
+  Future<bool> openUrl(String url) async =>
+      (await _ch.invokeMethod<bool>('openUrl', url)) ?? false;
 
   static const _beacon = EventChannel('stepaway/beacon');
 

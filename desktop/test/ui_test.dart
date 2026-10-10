@@ -306,6 +306,43 @@ void main() {
     model.dispose();
   });
 
+  testWidgets('About tab shows the version and opens the privacy policy', (
+    t,
+  ) async {
+    final (model, _) = await boot(t);
+    await t.tap(find.byKey(const Key('nav-about')));
+    await t.pumpAndSettle();
+    expect(find.byKey(const Key('about-version')), findsOneWidget);
+    expect(find.text('Version $kAppVersion'), findsOneWidget);
+    expect(find.text('$kBuildNumber'), findsOneWidget);
+    expect(
+      find.text(S.serviceVersion),
+      findsOneWidget,
+    ); // the daemon's version row
+    await t.tap(find.text('Privacy policy'));
+    await t.pumpAndSettle();
+    expect(find.byKey(const Key('privacy-summary')), findsOneWidget);
+    expect(
+      find.textContaining('makes no internet connections'),
+      findsOneWidget,
+    );
+    model.dispose();
+  });
+
+  test('Flatpak and Snap sandboxes get no in-app uninstaller', () {
+    bool none(String _) => false;
+    expect(isSandboxed(env: {}, fileExists: none), isFalse);
+    expect(isSandboxed(env: {'FLATPAK_ID': 'x'}, fileExists: none), isTrue);
+    expect(
+      isSandboxed(env: {'SNAP': '/snap/stepaway/1'}, fileExists: none),
+      isTrue,
+    );
+    expect(
+      isSandboxed(env: {}, fileExists: (p) => p == '/.flatpak-info'),
+      isTrue,
+    );
+  });
+
   testWidgets('no uninstall section when the platform has no uninstaller', (
     t,
   ) async {

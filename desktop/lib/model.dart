@@ -107,6 +107,7 @@ class DaemonModel extends ChangeNotifier {
   bool capServices = false;
   bool capApps = false;
   bool capBeacon = false;
+  String? daemonVersion;
   Map<String, dynamic> config = {};
   List<PairedDevice> phones = [];
   List<int> present = [];
@@ -201,6 +202,7 @@ class DaemonModel extends ChangeNotifier {
       capServices = caps['services'] == true;
       capApps = caps['apps'] == true;
       capBeacon = caps['beacon'] == true;
+      daemonVersion = s['version'] as String?;
       present = [
         for (final v in (s['devices_present'] as List? ?? const []))
           (v as num).toInt(),

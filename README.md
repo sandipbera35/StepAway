@@ -43,5 +43,8 @@ Bluetooth signal strength is only a rough distance estimate; calibrate once. Ste
 ## Layout
 `daemon/` Rust daemon · `desktop/` Flutter UI · `mobile/` Android companion · `ui/` shared widgets · `wear/` Wear OS · `windows-credprov/` Windows unlock (later) · `protocol/` spec + test vectors · `packaging/` packaging.
 
+## Privacy and legal
+StepAway collects nothing and never connects to the internet. Read the [privacy policy](PRIVACY.md) (also in both apps under About). Third-party licenses are in [THIRD_PARTY_LICENSES.txt](THIRD_PARTY_LICENSES.txt) and in the apps under About → Open-source licenses. Maintainers: `tools/version.sh set X.Y.Z` keeps every component's version in step; `tools/gen-privacy-md.py` and `tools/gen-rust-licenses.py` regenerate the generated documents.
+
 ## License
 GPL-3.0-or-later. The source is open for anyone to read and audit; forks and copies must remain GPL-licensed. See `LICENSE`.

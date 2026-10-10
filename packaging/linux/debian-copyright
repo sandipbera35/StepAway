@@ -1,0 +1,68 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: StepAway
+Upstream-Contact: https://github.com/sandipbera35/StepAway/issues
+Source: https://github.com/sandipbera35/StepAway
+
+Files: *
+Copyright: 2026 sandipbera35 and contributors
+License: GPL-3+
+
+Files: opt/stepaway/lib/libflutter_linux_gtk.so opt/stepaway/data/icudtl.dat
+Copyright: The Flutter Authors; Unicode, Inc. (ICU data)
+License: BSD-3-clause
+Comment: Flutter engine and its bundled third-party components. The complete list with
+ license texts is in /usr/share/doc/stepaway/THIRD_PARTY_LICENSES.txt and in the application
+ under About -> Open-source licenses.
+
+Files: opt/stepaway/stepawayd
+Copyright: 2026 sandipbera35 and contributors, and the authors of the statically linked Rust
+ crates listed in /usr/share/doc/stepaway/THIRD_PARTY_LICENSES.txt
+License: GPL-3+
+Comment: The linked crates are licensed MIT, Apache-2.0, BSD-3-Clause or Unlicense, all
+ compatible with the GPL-3+.
+
+Files: opt/stepaway/data/flutter_assets/packages/stepaway_ui/assets/fonts/*
+Copyright: 2016 The Inter Project Authors
+License: OFL-1.1
+Comment: Inter typeface, SIL Open Font License 1.1, text in THIRD_PARTY_LICENSES.txt via the
+ application's licenses page.
+
+License: GPL-3+
+ This program is free software: you can redistribute it and/or modify it under the terms of
+ the GNU General Public License as published by the Free Software Foundation, either version 3
+ of the License, or (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ the GNU General Public License for more details.
+ .
+ On Debian systems, the complete text of the GNU General Public License version 3 can be found
+ in /usr/share/common-licenses/GPL-3. A copy is also installed as
+ /usr/share/doc/stepaway/LICENSE.
+
+License: BSD-3-clause
+ Redistribution and use in source and binary forms, with or without modification, are
+ permitted provided that the following conditions are met:
+ .
+ 1. Redistributions of source code must retain the above copyright notice, this list of
+ conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice, this list of
+ conditions and the following disclaimer in the documentation and/or other materials provided
+ with the distribution.
+ 3. Neither the name of the copyright holder nor the names of its contributors may be used to
+ endorse or promote products derived from this software without specific prior written
+ permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER
+ OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+
+License: OFL-1.1
+ This Font Software is licensed under the SIL Open Font License, Version 1.1. The full license
+ text is at https://openfontlicense.org and is included in the application's licenses page.

@@ -6,6 +6,7 @@ import 'package:window_manager/window_manager.dart';
 
 import 'ipc/rpc_client.dart';
 import 'model.dart';
+import 'pages/about.dart';
 import 'pages/calibration.dart';
 import 'pages/dashboard.dart';
 import 'pages/devices.dart';
@@ -19,6 +20,10 @@ import 'window_frame.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  registerExtraLicenses({
+    'StepAway background service (Rust crates)':
+        'assets/THIRD_PARTY_LICENSES.txt',
+  });
   if (Platform.isLinux || Platform.isWindows) {
     await windowManager.ensureInitialized();
     await windowManager.waitUntilReadyToShow(
@@ -99,6 +104,7 @@ class _ShellState extends State<Shell> {
     (Key('nav-phones'), Icons.devices_rounded, S.devices),
     (Key('nav-calibrate'), Icons.tune, S.calibrate),
     (Key('nav-settings'), Icons.settings, S.settings),
+    (Key('nav-about'), Icons.info_outline_rounded, S.about),
   ];
 
   @override
@@ -115,6 +121,7 @@ class _ShellState extends State<Shell> {
           DevicesPage(model: m),
           CalibrationPage(model: m),
           SettingsPage(model: m, theme: widget.theme),
+          AboutPage(model: m),
         ];
         final body = Scaffold(
           body: Column(

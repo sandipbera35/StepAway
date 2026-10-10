@@ -131,6 +131,7 @@ pub fn dispatch(shared: &Shared, method: &str, params: &Value) -> RpcResult {
                 .collect();
             Ok(json!({
                 "protocol": PROTOCOL_VERSION,
+                "version": env!("CARGO_PKG_VERSION"),
                 "state": state_name(e.state()),
                 "paused": e.paused(),
                 "scanning": shared.scanning.load(Ordering::Relaxed),
@@ -498,6 +499,7 @@ mod tests {
         assert_eq!(v["result"][0]["id"], "firefox.desktop");
         assert_eq!(v["result"][0]["running"], true);
         let st = call(&s, json!({"jsonrpc":"2.0","id":6,"method":"status"}));
+        assert_eq!(st["result"]["version"], env!("CARGO_PKG_VERSION"));
         assert_eq!(st["result"]["capabilities"]["media"], true);
         assert_eq!(st["result"]["capabilities"]["apps"], true);
         assert_eq!(st["result"]["capabilities"]["services"], false);
