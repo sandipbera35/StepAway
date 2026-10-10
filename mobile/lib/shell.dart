@@ -118,13 +118,13 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   }
 
   Future<void> _paste() async {
-    final ctl = TextEditingController();
+    var text = '';
     final uri = await showDialog<String>(
       context: context,
       builder: (c) => AlertDialog(
         title: const Text(S.pairPaste),
         content: TextField(
-          controller: ctl,
+          onChanged: (v) => text = v,
           decoration: const InputDecoration(hintText: S.pasteHint),
           autofocus: true,
         ),
@@ -134,7 +134,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
             child: const Text(S.cancel),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(c, ctl.text.trim()),
+            onPressed: () => Navigator.pop(c, text.trim()),
             child: const Text(S.pair),
           ),
         ],

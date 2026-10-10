@@ -66,16 +66,17 @@ class DevicesPage extends StatelessWidget {
   }
 
   Future<void> _rename(BuildContext context, PairedDevice d) async {
-    final ctl = TextEditingController(text: d.name);
+    var text = d.name;
     final name = await showDialog<String>(
       context: context,
       builder: (c) => AlertDialog(
         title: const Text(S.rename),
-        content: TextField(
+        content: TextFormField(
           key: const Key('rename-field'),
-          controller: ctl,
+          initialValue: d.name,
+          onChanged: (v) => text = v,
           autofocus: true,
-          onSubmitted: (v) => Navigator.pop(c, v),
+          onFieldSubmitted: (v) => Navigator.pop(c, v),
         ),
         actions: [
           TextButton(
@@ -83,7 +84,7 @@ class DevicesPage extends StatelessWidget {
             child: const Text(S.cancel),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(c, ctl.text),
+            onPressed: () => Navigator.pop(c, text),
             child: const Text(S.done),
           ),
         ],
